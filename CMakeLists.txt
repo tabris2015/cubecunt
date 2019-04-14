@@ -8,7 +8,7 @@ include_directories(./librobotcontrol/library/include)
 
 file(GLOB lib_src "./librobotcontrol/library/src/*.c")
 file(GLOB bmp_src "./librobotcontrol/library/src/bmp/*.c")
-file(GLOB io_src "./librobotcontrol/library/src/bio/*.c")
+file(GLOB io_src "./librobotcontrol/library/src/io/*.c")
 file(GLOB math_src "./librobotcontrol/library/src/math/*.c")
 file(GLOB mpu_src "./librobotcontrol/library/src/mpu/*.c")
 file(GLOB pru_src "./librobotcontrol/library/src/pru/*.c")
