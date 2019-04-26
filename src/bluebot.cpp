@@ -22,6 +22,11 @@ BlueBot::BlueBot()
 
 }
 
+bool BlueBot::isAlive()
+{
+    return rc_get_state() == EXITING;
+}
+
 void BlueBot::initButtons()
 {
     if(rc_button_init(RC_BTN_PIN_PAUSE, 

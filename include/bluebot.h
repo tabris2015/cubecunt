@@ -29,15 +29,12 @@ private:
     void initButtons();
 
 public:
+    // constructores
     BlueBot(/* args */);
-    int drive(double left_speed, double right_speed);
-    int diffDrive(double angular, double linear);
-    int getLinePos();
-    int openArm();
-    int closeArm();
-    std::vector<float> getDistances();
-
+    // Destructor
     ~BlueBot();
+
+    bool isAlive();
 };
 
 }
