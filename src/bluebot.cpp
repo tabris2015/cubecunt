@@ -15,6 +15,9 @@ BlueBot::BlueBot()
     std::cout << "iniciando botones...\n";
     initButtons();
 
+    // iniciar leds
+    std::cout << "iniciando leds...\n";
+    initLeds();
     // crear archivo pid 
     std::cout << "registrando proceso...\n";
     rc_make_pid_file();
@@ -47,6 +50,27 @@ void BlueBot::initButtons()
 	rc_button_set_callbacks(RC_BTN_PIN_MODE, this->onModePress, this->onModeRelease);
 }
 
+void BlueBot::initLeds()
+{
+    if((rc_led_set(RC_LED_GREEN, 0)==-1) || (rc_led_set(RC_LED_RED, 0)==-1))
+    {
+		throw "Error al iniciar leds\n";
+	}
+}
+
+
+void BlueBot::setRedLed(int val)
+{
+    rc_led_set(RC_LED_RED, val);
+}
+
+void BlueBot::setGreenLed(int val)
+{
+    rc_led_set(RC_LED_GREEN, val);
+}
+
+
+
 void BlueBot::onPausePress()
 {
     std::cout << "Pause presionado\n";
@@ -66,6 +90,7 @@ void BlueBot::onModeRelease()
 
 BlueBot::~BlueBot()
 {
+    std::cout << "limpiando...\n";
     rc_button_cleanup();
 	rc_remove_pid_file();
 };

@@ -27,6 +27,7 @@ private:
     static void onModeRelease();
 
     void initButtons();
+    void initLeds();
 
 public:
     // constructores
@@ -35,6 +36,8 @@ public:
     ~BlueBot();
 
     bool isAlive();
+    void setRedLed(int val);
+    void setGreenLed(int val);
 };
 
 }
