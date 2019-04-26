@@ -12,19 +12,22 @@ BlueBot::BlueBot()
     if(rc_enable_signal_handler() < 0) throw "Error al iniciar signal handler/n";
 
     // iniciar botones
+    std::cout << "iniciando botones...\n";
     initButtons();
 
     // crear archivo pid 
+    std::cout << "registrando proceso...\n";
     rc_make_pid_file();
 
     // preparar para iniciar
+    std::cout << "iniciando...\n";
     rc_set_state(RUNNING);
 
 }
 
 bool BlueBot::isAlive()
 {
-    return rc_get_state() == EXITING;
+    return rc_get_state() != EXITING;
 }
 
 void BlueBot::initButtons()
