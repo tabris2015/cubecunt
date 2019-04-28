@@ -32,6 +32,7 @@ BlueBot::BlueBot(int ts):sample_rate_(ts)               // iniciar tiempo de mue
     // iniciar IMU
     std::cout << "iniciando IMU...\n";
     initImu();
+
     // crear archivo pid 
     std::cout << "registrando proceso...\n";
     rc_make_pid_file();
@@ -87,7 +88,7 @@ void BlueBot::initImu()
 
 void BlueBot::onImuInterrupt()
 {
-    printf("   %6.1f   |", imu_data_.compass_heading*RAD_TO_DEG);
+    std::cout << imu_data_.compass_heading*RAD_TO_DEG << std::endl;
 }
 void BlueBot::setRedLed(int val)
 {

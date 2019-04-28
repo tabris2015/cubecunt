@@ -3,41 +3,47 @@
 #include <thread>
 #include "bluebot.h"
 
-int main(void)
+void testMotors(blue::BlueBot* bot)
 {
-    std::cout << "hola bola" << std::endl;
-    blue::BlueBot bot;
-
     double delta = 0.01;
     for(double i = 0.0; i < 1.0; i += delta)
     {
-        bot.driveMotors(i,i);
+        bot->driveMotors(i,i);
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        auto enc = bot.readEncoders();
+        auto enc = bot->readEncoders();
         std::cout << "motors: " << enc.first << ", " << enc.second << "\n";
     }
     for(double i = 1.0; i > 0.0; i -= delta)
     {
-        bot.driveMotors(i,i);
+        bot->driveMotors(i,i);
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        auto enc = bot.readEncoders();
+        auto enc = bot->readEncoders();
         std::cout << "motors: " << enc.first << ", " << enc.second << "\n";
     }
 
     for(double i = 0.0; i > -1.0; i -= delta)
     {
-        bot.driveMotors(i,i);
+        bot->driveMotors(i,i);
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        auto enc = bot.readEncoders();
+        auto enc = bot->readEncoders();
         std::cout << "motors: " << enc.first << ", " << enc.second << "\n";
     }
     for(double i = -1.0; i < 0.0; i += delta)
     {
-        bot.driveMotors(i,i);
+        bot->driveMotors(i,i);
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        auto enc = bot.readEncoders();
+        auto enc = bot->readEncoders();
         std::cout << "motors: " << enc.first << ", " << enc.second << "\n";
     }
+
+}
+
+int main(void)
+{
+    std::cout << "hola bola" << std::endl;
+    blue::BlueBot bot;
+
+    // testMotors(&bot);
 
     while(bot.isAlive())
     {
