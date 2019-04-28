@@ -142,5 +142,6 @@ BlueBot::~BlueBot()
     rc_button_cleanup();
     rc_motor_cleanup();
     rc_encoder_eqep_cleanup();
+    rc_mpu_power_off();
 	rc_remove_pid_file();
 };
