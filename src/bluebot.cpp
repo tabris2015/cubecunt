@@ -82,6 +82,7 @@ void BlueBot::initImu()
     imu_config_.gpio_interrupt_pin = mpu_int_pin;
     // ignore priorities and scheduling for now
     imu_config_.enable_magnetometer = 1;
+    imu_config_.show_warnings = 1;
     if(rc_mpu_initialize_dmp(&imu_data_, imu_config_)) throw "error al iniciar IMU\n";
     rc_mpu_set_dmp_callback(onImuInterrupt);
 }
