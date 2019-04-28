@@ -77,9 +77,9 @@ void BlueBot::initLeds()
 void BlueBot::initImu()
 {
     imu_config_ = rc_mpu_default_config();
-    imu_config_.i2c_bus = mpu_i2c_bus;
-    imu_config_.gpio_interrupt_pin_chip = mpu_int_chip;
-    imu_config_.gpio_interrupt_pin = mpu_int_pin;
+    // imu_config_.i2c_bus = mpu_i2c_bus;
+    // imu_config_.gpio_interrupt_pin_chip = mpu_int_chip;
+    // imu_config_.gpio_interrupt_pin = mpu_int_pin;
     // ignore priorities and scheduling for now
     imu_config_.enable_magnetometer = 1;
     imu_config_.show_warnings = 1;
