@@ -53,7 +53,7 @@ private:
 public:
     static rc_mpu_data_t imu_data_;
     // constructores
-    BlueBot(int ts = 100);
+    BlueBot(int ts = 50);
     // Destructor
     ~BlueBot();
 
