@@ -2,8 +2,10 @@
 #include <iostream>
 
 using blue::BlueBot;
+
+rc_mpu_data_t BlueBot::imu_data_;
 // constructor
-BlueBot::BlueBot()
+BlueBot::BlueBot(int ts):sample_rate_(ts)               // iniciar tiempo de muestreo
 {
     // asegurarse que otra instancia no esta corriendo
     if(rc_kill_existing_process(2.0) < -2) throw "Instancia corriendo\n";
@@ -26,6 +28,10 @@ BlueBot::BlueBot()
     // iniciar encoders
     std::cout << "iniciando encoders...\n";
     if(rc_encoder_eqep_init() != 0) throw "error al iniciar encoders\n";
+
+    // iniciar IMU
+    std::cout << "iniciando IMU...\n";
+    initImu();
     // crear archivo pid 
     std::cout << "registrando proceso...\n";
     rc_make_pid_file();
@@ -67,6 +73,22 @@ void BlueBot::initLeds()
 }
 
 
+void BlueBot::initImu()
+{
+    imu_config_ = rc_mpu_default_config();
+    imu_config_.i2c_bus = mpu_i2c_bus;
+    imu_config_.gpio_interrupt_pin_chip = mpu_int_chip;
+    imu_config_.gpio_interrupt_pin = mpu_int_pin;
+    // ignore priorities and scheduling for now
+    imu_config_.enable_magnetometer = 1;
+    if(rc_mpu_initialize_dmp(&imu_data_, imu_config_)) throw "error al iniciar IMU\n";
+    rc_mpu_set_dmp_callback(onImuInterrupt);
+}
+
+void BlueBot::onImuInterrupt()
+{
+    printf("   %6.1f   |", imu_data_.compass_heading*RAD_TO_DEG);
+}
 void BlueBot::setRedLed(int val)
 {
     rc_led_set(RC_LED_RED, val);
