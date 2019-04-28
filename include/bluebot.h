@@ -2,6 +2,7 @@
 #define BLUEBOT_H
 #include <robotcontrol.h>
 #include <vector>
+#include <map>
 
 namespace blue
 {
@@ -47,7 +48,7 @@ public:
 
     // motors
     void driveMotors(double left, double right);
-
+    std::pair<int, int> readEncoders();
 };
 
 }

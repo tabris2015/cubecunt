@@ -22,6 +22,10 @@ BlueBot::BlueBot()
     // iniciar motores
     std::cout << "iniciando motores...\n";
     if(rc_motor_init() != 0) throw "error al iniciar motores\n";
+
+    // iniciar encoders
+    std::cout << "iniciando encoders...\n";
+    if(rc_encoder_eqep_init() != 0) throw "error al iniciar encoders\n";
     // crear archivo pid 
     std::cout << "registrando proceso...\n";
     rc_make_pid_file();
@@ -101,6 +105,11 @@ void BlueBot::driveMotors(double left, double right)
     rc_motor_set(right_m_channel, right);
 }
 
+//encoders
+std::pair<int, int> BlueBot::readEncoders()
+{
+    return std::make_pair(rc_encoder_eqep_read(left_m_channel), rc_encoder_eqep_read(right_m_channel));
+}
 
 
 BlueBot::~BlueBot()
@@ -110,5 +119,6 @@ BlueBot::~BlueBot()
 	rc_led_set(RC_LED_RED, 0);
     rc_button_cleanup();
     rc_motor_cleanup();
+    rc_encoder_eqep_cleanup();
 	rc_remove_pid_file();
 };
