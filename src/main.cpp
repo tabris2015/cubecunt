@@ -8,6 +8,11 @@ int main(void)
     std::cout << "hola bola" << std::endl;
     blue::BlueBot bot;
 
+    for(double i = 0.0; i < 1.0; i += 0.1)
+    {
+        bot.driveMotors(i,i);
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    }
     while(bot.isAlive())
     {
         bot.setGreenLed(1);

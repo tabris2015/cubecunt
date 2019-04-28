@@ -2,7 +2,7 @@
 #include <iostream>
 
 using blue::BlueBot;
-
+// constructor
 BlueBot::BlueBot()
 {
     // asegurarse que otra instancia no esta corriendo
@@ -18,6 +18,10 @@ BlueBot::BlueBot()
     // iniciar leds
     std::cout << "iniciando leds...\n";
     initLeds();
+
+    // iniciar motores
+    std::cout << "iniciando motores...\n";
+    if(rc_motor_init() != 0) throw "error al iniciar motores\n";
     // crear archivo pid 
     std::cout << "registrando proceso...\n";
     rc_make_pid_file();
@@ -88,9 +92,23 @@ void BlueBot::onModeRelease()
     std::cout << "Mode soltado\n";
 }
 
+
+// motors
+
+void BlueBot::driveMotors(double left, double right)
+{
+    rc_motor_set(left_m_channel, left);
+    rc_motor_set(right_m_channel, right);
+}
+
+
+
 BlueBot::~BlueBot()
 {
     std::cout << "limpiando...\n";
+    rc_led_set(RC_LED_GREEN, 0);
+	rc_led_set(RC_LED_RED, 0);
     rc_button_cleanup();
+    rc_motor_cleanup();
 	rc_remove_pid_file();
 };

@@ -5,6 +5,11 @@
 
 namespace blue
 {
+
+constexpr int left_m_channel = 2;
+constexpr int right_m_channel = 3;
+
+
 enum class RobotState
 {
     IDLE,
@@ -29,6 +34,7 @@ private:
     void initButtons();
     void initLeds();
 
+
 public:
     // constructores
     BlueBot(/* args */);
@@ -38,6 +44,10 @@ public:
     bool isAlive();
     void setRedLed(int val);
     void setGreenLed(int val);
+
+    // motors
+    void driveMotors(double left, double right);
+
 };
 
 }
