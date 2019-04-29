@@ -1,6 +1,7 @@
 #include <bluebot.h>
 #include <iostream>
-
+#include <thread>
+#include <chrono>
 using blue::BlueBot;
 
 rc_mpu_data_t BlueBot::imu_data_;
@@ -86,6 +87,8 @@ void BlueBot::initImu()
     imu_config_.compass_time_constant = 5.0;
     imu_config_.dmp_auto_calibrate_gyro = 1;
     if(rc_mpu_initialize_dmp(&imu_data_, imu_config_)) throw "error al iniciar IMU\n";
+    std::cout << "esperando que sensores se estabilicen...\n";
+    std::this_thread::sleep_for(std::chrono::seconds(3));
     rc_mpu_set_dmp_callback(onImuInterrupt);
 }
 
