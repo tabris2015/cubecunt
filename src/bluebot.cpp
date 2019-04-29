@@ -84,7 +84,7 @@ void BlueBot::initImu()
     // ignore priorities and scheduling for now
     imu_config_.enable_magnetometer = 1;
     imu_config_.show_warnings = 1;
-    imu_config_.compass_time_constant = 5.0;
+    imu_config_.compass_time_constant = 0.5;
     imu_config_.dmp_auto_calibrate_gyro = 1;
     if(rc_mpu_initialize_dmp(&imu_data_, imu_config_)) throw "error al iniciar IMU\n";
     std::cout << "esperando que sensores se estabilicen...\n";
