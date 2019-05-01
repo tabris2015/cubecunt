@@ -97,10 +97,10 @@ void BlueBot::initImu()
 
 void BlueBot::onImuInterrupt()
 {
-    std::cout << std::setprecision(2) << "heading: " << imu_data_.compass_heading*RAD_TO_DEG;
-    std::cout << std::setprecision(2) << " Acc: [" << imu_data_.accel[0] << ", "<< imu_data_.accel[1] << ", "<< imu_data_.accel[2] << "]\t ";
-    std::cout << std::setprecision(2) << " Gyro: [" << imu_data_.gyro[0] << ", "<< imu_data_.gyro[1] << ", "<< imu_data_.gyro[2] << "]\t ";
-    std::cout << std::setprecision(2) << " Mag: [" << imu_data_.mag[0] << ", "<< imu_data_.mag[1] << ", "<< imu_data_.mag[2] << "]\n ";
+    std::cout << std::setprecision(4) << "heading: " << imu_data_.compass_heading*RAD_TO_DEG;
+    std::cout << std::setprecision(4) << " Acc: [" << imu_data_.accel[0] << ", "<< imu_data_.accel[1] << ", "<< imu_data_.accel[2] << "]\t ";
+    std::cout << std::setprecision(4) << " Gyro: [" << imu_data_.gyro[0] << ", "<< imu_data_.gyro[1] << ", "<< imu_data_.gyro[2] << "]\t ";
+    std::cout << std::setprecision(4) << " Mag: [" << imu_data_.mag[0] << ", "<< imu_data_.mag[1] << ", "<< imu_data_.mag[2] << "]\n ";
     // std::cout << imu_data_.gyro_to_degs << std::endl;
 }
 void BlueBot::setRedLed(int val)
