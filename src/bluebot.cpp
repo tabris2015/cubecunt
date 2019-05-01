@@ -77,15 +77,17 @@ void BlueBot::initLeds()
 
 void BlueBot::initImu()
 {
+
     imu_config_ = rc_mpu_default_config();
     // imu_config_.i2c_bus = mpu_i2c_bus;
     // imu_config_.gpio_interrupt_pin_chip = mpu_int_chip;
     // imu_config_.gpio_interrupt_pin = mpu_int_pin;
     // ignore priorities and scheduling for now
+    imu_config_.dmp_fetch_accel_gyro = 1;
     imu_config_.enable_magnetometer = 1;
     imu_config_.show_warnings = 1;
-    imu_config_.compass_time_constant = 0.5;
-    imu_config_.dmp_auto_calibrate_gyro = 1;
+    // imu_config_.compass_time_constant = 0.5;
+    // imu_config_.dmp_auto_calibrate_gyro = 1;
     if(rc_mpu_initialize_dmp(&imu_data_, imu_config_)) throw "error al iniciar IMU\n";
     std::cout << "esperando que sensores se estabilicen...\n";
     std::this_thread::sleep_for(std::chrono::seconds(3));
@@ -94,7 +96,11 @@ void BlueBot::initImu()
 
 void BlueBot::onImuInterrupt()
 {
-    std::cout << imu_data_.compass_heading*RAD_TO_DEG << std::endl;
+    std::cout << "heading: " << imu_data_.compass_heading*RAD_TO_DEG;
+    std::cout << " Acc: [" << imu_data_.accel[0] << ", "<< imu_data_.accel[1] << ", "<< imu_data_.accel[2] << "]\t ";
+    std::cout << " Gyro: [" << imu_data_.gyro[0] << ", "<< imu_data_.gyro[1] << ", "<< imu_data_.gyro[2] << "]\t ";
+    std::cout << " Mag: [" << imu_data_.mag[0] << ", "<< imu_data_.mag[1] << ", "<< imu_data_.mag[2] << "]\n ";
+    // std::cout << imu_data_.gyro_to_degs << std::endl;
 }
 void BlueBot::setRedLed(int val)
 {
