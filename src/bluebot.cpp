@@ -209,7 +209,7 @@ void BlueBot::driveUnicycle(double v, double w)
 {
     double v_r = (2 * v + w * base_length_) / (2 * wheel_radius_);
     double v_l = (2 * v - w * base_length_) / (2 * wheel_radius_);
-    
+    std::cout << "velocities: [" << v_l << ", " << v_r << "]\n";
     driveMotors(v_l, v_r);
 }
 

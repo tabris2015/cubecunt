@@ -45,12 +45,14 @@ int main(void)
     blue::BlueBot bot(0.065/2, 0.17, 1496.0, 50);
 
     // testMotors(&bot);
-
-    bot.driveUnicycle(0.3, 0.0);
+    bot.driveMotors(0.15, 0.15);
     std::this_thread::sleep_for(std::chrono::seconds(2));
-    bot.driveUnicycle(0.2, 0.3);
+    bot.driveMotors(0, 0);
+    
+    bot.driveUnicycle(0.1, 0.0);
     std::this_thread::sleep_for(std::chrono::seconds(2));
     bot.driveUnicycle(0, 0);
+    bot.driveMotors(0, 0);
     
     while(bot.isAlive())
     {
