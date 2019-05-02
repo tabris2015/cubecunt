@@ -175,7 +175,7 @@ void BlueBot::updateStatePeriodic()
         angle_pid_.compute();
 
         float v = 0.03;
-
+        if(distance(last_x_, last_y_, x_goal_, y_goal_) < 0.04) v = 0.0;
         // actuation
         driveUnicycle(v, w_);
         // print state
