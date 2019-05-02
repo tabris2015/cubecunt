@@ -221,6 +221,12 @@ void BlueBot::setGoal(float x_goal, float y_goal)
     std::cout << "new goal: [" << x_goal_ << ", " << y_goal_ << "] theta: " << theta_goal_ << std::endl;
 }
 
+void BlueBot::setGoToGoalGains(float kp, float ki, float kd)
+{
+    Kp_gtg_ = kp;
+    Ki_gtg_ = ki;
+    Kd_gtg_ = kd;
+}
 
 void BlueBot::onPausePress()
 {
