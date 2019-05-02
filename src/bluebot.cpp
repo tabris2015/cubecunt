@@ -171,11 +171,12 @@ void BlueBot::updateStatePeriodic()
         // updateImu();
         updateOdometry();
         // controller
-        std::cout << "pos: (" << last_x_ << ", " << last_y_ << ") \t";
+        std::cout << std::setprecision(5) << "pos: (" << last_x_ << ", " << last_y_ << ") \t";
         angle_pid_.compute();
 
-        
-        if(distance(last_x_, last_y_, x_goal_, y_goal_) < 0.04) v_ = 0.0;
+        auto dist_to_goal = distance(last_x_, last_y_, x_goal_, y_goal_);
+        std::cout << "dist: " << dist_to_goal << "/t";
+        if(dist_to_goal < 0.04) v_ = 0.0;
         // actuation
         driveUnicycle(v_, w_);
         // print state
