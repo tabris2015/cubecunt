@@ -48,6 +48,12 @@ Kp_gtg_(2), Ki_gtg_(0), Kd_gtg_(0)
     // preparar para iniciar
     std::cout << "iniciando...\n";
 
+
+    // iniciar motores
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::cout << "iniciando motores...\n";
+    if(rc_motor_init() != 0) throw "error al iniciar motores\n";
+
     // iniciar hilo periodico
     if(loop_thread)
     {
@@ -61,12 +67,6 @@ Kp_gtg_(2), Ki_gtg_(0), Kd_gtg_(0)
                 << " us/tick \nPeriodo deseado: "
                 << intervalMillis_.count()
                 << " ms\n";
-
-    // iniciar motores
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    std::cout << "iniciando motores...\n";
-    if(rc_motor_init() != 0) throw "error al iniciar motores\n";
-
     rc_set_state(RUNNING);
 
 }
