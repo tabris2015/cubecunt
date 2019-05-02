@@ -173,7 +173,7 @@ void BlueBot::updateStatePeriodic()
         e_gtg_ = theta_goal_ - last_phi_;
         auto error = atan2f(sinf(e_gtg_), cosf(e_gtg_));
         std::cout << "error: " << e_gtg_ << " corrected: " << error;
-        float v = 0.05;
+        float v = 0.08;
 
 
         delta_e_gtg_ = error - last_e_gtg_;
