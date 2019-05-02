@@ -17,6 +17,8 @@ constexpr int mpu_i2c_bus = 2;
 constexpr int mpu_int_chip = 3;
 constexpr int mpu_int_pin = 2;
 
+
+// TEMPORAL 
 enum class RobotState
 {
     IDLE,
@@ -24,10 +26,6 @@ enum class RobotState
     ERROR
 };
 
-enum class ProgramState 
-{ 
-
-};
 class BlueBot
 {
 private:
@@ -53,11 +51,8 @@ private:
     std::chrono::steady_clock::time_point nextStartTime_;
     std::thread innerLoopThread;
 
-    // controllers
-    // 
-    std::pair<float, float> goal_;
 
-
+    
     float vel_l_;
     float vel_r_;
     float v_;
@@ -66,7 +61,23 @@ private:
     float last_y_;
     float last_phi_;
     
+    float x_goal_;
+    float y_goal_;
+    float theta_goal_;
+    float v_goal_;
     bool is_active_;
+    
+    // controllers
+    // 
+    float Kp_gtg_;
+    float Ki_gtg_;
+    float Kd_gtg_;
+    float e_gtg_;
+    float last_e_gtg_;
+    float e_sum_gtg_;
+    float delta_e_gtg_;
+
+    std::pair<float, float> goal_;
 
     // imu
     rc_mpu_config_t imu_config_;
@@ -88,6 +99,7 @@ private:
     void updateOdometry();
     void updateImu();
 
+    float distance(float x1, float y1, float x2, float y2);
 
 
 public:
@@ -108,6 +120,10 @@ public:
     void driveUnicycle(double v, double w);
     std::pair<int, int> readEncoders();
     // odometry
+
+    // controllers 
+    void setGoal(float x_goal, float y_goal);
+    void setAngle(float theta_goal);
 };
 
 }

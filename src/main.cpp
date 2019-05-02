@@ -41,21 +41,21 @@ void testMotors(blue::BlueBot* bot)
 int main(void)
 {
 
-    std::cout << "hola bola" << std::endl;
-    blue::BlueBot bot(0.065/2, 0.17, 1496.0, 50);
+    std::cout << "iniciando" << std::endl;
+    blue::BlueBot bot(0.065/2, 0.17, 1496.0, 50, true);
 
     // testMotors(&bot);
-    std::cout << "both motors 0.15" << std::endl;
-    bot.driveMotors(0.15, 0.15);
-    std::this_thread::sleep_for(std::chrono::seconds(2));
-    bot.driveMotors(0, 0);
-    std::cout << "unicycle 0.1, 0.0" << std::endl;
-    bot.driveUnicycle(0.1, 0.0);
-    std::this_thread::sleep_for(std::chrono::seconds(2));
-    bot.driveUnicycle(0, 0);
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    std::cout << "stop" << std::endl;
-    bot.driveMotors(0, 0);
+    // std::cout << "both motors 0.15" << std::endl;
+    // bot.driveMotors(0.15, 0.15);
+    // std::this_thread::sleep_for(std::chrono::seconds(2));
+    // bot.driveMotors(0, 0);
+    // std::cout << "unicycle 0.1, 0.0" << std::endl;
+    // bot.driveUnicycle(0.1, 0.0);
+    // std::this_thread::sleep_for(std::chrono::seconds(2));
+    // bot.driveUnicycle(0, 0);
+    // std::this_thread::sleep_for(std::chrono::seconds(1));
+    // std::cout << "stop" << std::endl;
+    // bot.driveMotors(0, 0);
     
     while(bot.isAlive())
     {

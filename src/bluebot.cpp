@@ -12,7 +12,9 @@ wheel_radius_(R),           // init robot wheel radius [m]
 base_length_(L),            // init robot base length [m]
 ticks_per_rev_(N),          // init encoder ticks per revolution
 microsPerClkTick_(1.0E6 * std::chrono::steady_clock::period::num / std::chrono::steady_clock::period::den), // compute micros per clock tick
-intervalMillis_(std::chrono::milliseconds(1000 / sample_rate_)) // compute interval in milliseconds
+intervalMillis_(std::chrono::milliseconds(1000 / sample_rate_)), // compute interval in milliseconds
+last_x_(0), last_y_(0), last_phi_(0), x_goal_(last_x_), y_goal_(last_y_),
+Kp_gtg_(2), Ki_gtg_(0), Kd_gtg_(0)
 {
 
     // asegurarse que otra instancia no esta corriendo
@@ -142,10 +144,14 @@ void BlueBot::updateOdometry()
     last_x_ += dist_c * cosf(last_phi_);
     last_y_ += dist_c * sinf(last_phi_);
 
-    std::cout << "raw ticks: [" << ticks.first << ", " << ticks.second <<"]\n";
+    // std::cout << "raw ticks: [" << ticks.first << ", " << ticks.second <<"]\n";
     std::cout << "[x, y, phi]: [" << last_x_ << ", " << last_y_ << ", " << last_phi_ << "]\n";
 }
 
+float BlueBot::distance(float x1, float y1, float x2, float y2)
+{
+    return sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
+}
 
 void BlueBot::updateStatePeriodic()
 {
@@ -160,8 +166,33 @@ void BlueBot::updateStatePeriodic()
             << std::chrono::duration_cast<std::chrono::microseconds>(currentStartTime_ - nextStartTime_).count() / 1000.0 << std::endl;
 
         // do task
-        updateImu();
+        // updateImu();
         updateOdometry();
+        // controller
+        e_gtg_ = theta_goal_ - last_phi_;
+        auto error = atan2f(sinf(e_gtg_), cosf(e_gtg_));
+        std::cout << "error: " << error;
+        float v = 0.08;
+
+
+        delta_e_gtg_ = error - last_e_gtg_;
+
+        e_sum_gtg_ += error;
+
+        float w = Kp_gtg_ * error + Kd_gtg_ * delta_e_gtg_ + Ki_gtg_ * e_sum_gtg_;
+        
+        std::cout << " w: " << w << std::endl;
+        last_e_gtg_ = error;
+
+        if(distance(last_x_, last_y_, x_goal_, y_goal_) < 0.1)
+        {
+            v = 0;
+            w = 0;
+            std::cout << "objetivo alcanzado! \n";
+        } 
+        // actuation
+        driveUnicycle(v, w);
+
         // determine next point 
         nextStartTime_ = currentStartTime_ + intervalMillis_;
 
@@ -181,6 +212,15 @@ void BlueBot::setGreenLed(int val)
 }
 
 
+void BlueBot::setGoal(float x_goal, float y_goal)
+{
+    x_goal_ = x_goal;
+    y_goal_ = y_goal;
+    theta_goal_ = atanf((y_goal_ - last_y_) / (x_goal_ - last_x_));
+
+    std::cout << "new goal: [" << x_goal_ << ", " << y_goal_ << "] theta: " << theta_goal_ << std::endl;
+}
+
 
 void BlueBot::onPausePress()
 {
@@ -198,8 +238,6 @@ void BlueBot::onModeRelease()
 {
     std::cout << "Mode soltado\n";
 }
-
-
 
 // motors
 
