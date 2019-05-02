@@ -179,12 +179,12 @@ void BlueBot::updateStatePeriodic()
         // actuation
         driveUnicycle(v, w_);
         // print state
-        std::cout << theta_goal_ << ","
-                    << last_phi_ << ","
-                    << theta_goal_ - last_phi_ << ","
-                    << w_ << ","
-                    << distance(last_x_, last_y_, x_goal_, y_goal_) << ","
-                    << v << "\n";
+        // std::cout << theta_goal_ << ","
+        //             << last_phi_ << ","
+        //             << theta_goal_ - last_phi_ << ","
+        //             << w_ << ","
+        //             << distance(last_x_, last_y_, x_goal_, y_goal_) << ","
+        //             << v << "\n";
 
         // determine next point 
         next_start_time_ = current_start_time_ + interval_us_;
