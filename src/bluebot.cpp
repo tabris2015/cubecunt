@@ -174,10 +174,10 @@ void BlueBot::updateStatePeriodic()
         std::cout << "pos: (" << last_x_ << ", " << last_y_ << ") \t";
         angle_pid_.compute();
 
-        float v = 0.03;
-        if(distance(last_x_, last_y_, x_goal_, y_goal_) < 0.04) v = 0.0;
+        
+        if(distance(last_x_, last_y_, x_goal_, y_goal_) < 0.04) v_ = 0.0;
         // actuation
-        driveUnicycle(v, w_);
+        driveUnicycle(v_, w_);
         // print state
         // std::cout << theta_goal_ << ","
         //             << last_phi_ << ","
@@ -220,6 +220,11 @@ void BlueBot::setGoToGoalGains(float kp, float ki, float kd)
     Ki_gtg_ = ki;
     Kd_gtg_ = kd;
     angle_pid_.setGains(Kp_gtg_, Ki_gtg_, Kd_gtg_);
+}
+
+void BlueBot::setLinearVel(float v)
+{
+    v_ = v;
 }
 
 void BlueBot::onPausePress()

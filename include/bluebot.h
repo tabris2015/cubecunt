@@ -168,6 +168,7 @@ public:
     void setGoal(float x_goal, float y_goal);
     void setGoToGoalGains(float kp, float ki, float kd);
     void setAngle(float theta_goal);
+    void setLinearVel(float v);
 };
 
 }
