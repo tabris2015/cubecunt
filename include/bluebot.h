@@ -53,6 +53,11 @@ private:
     std::chrono::steady_clock::time_point nextStartTime_;
     std::thread innerLoopThread;
 
+    // controllers
+    // 
+    std::pair<float, float> goal_;
+
+
     float vel_l_;
     float vel_r_;
     float v_;
@@ -84,6 +89,7 @@ private:
     void updateImu();
 
 
+
 public:
     void updateStatePeriodic();
     // constructores
@@ -99,6 +105,7 @@ public:
 
     // motors
     void driveMotors(double left, double right);
+    void driveUnicycle(double v, double w);
     std::pair<int, int> readEncoders();
     // odometry
 };

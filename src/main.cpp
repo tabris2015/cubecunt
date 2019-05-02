@@ -42,10 +42,16 @@ int main(void)
 {
 
     std::cout << "hola bola" << std::endl;
-    blue::BlueBot bot(0.065/2, 0.17, 1364.8, 50);
+    blue::BlueBot bot(0.065/2, 0.17, 1496.0, 50);
 
     // testMotors(&bot);
 
+    bot.driveUnicycle(0.3, 0.0);
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    bot.driveUnicycle(0.2, 0.3);
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    bot.driveUnicycle(0, 0);
+    
     while(bot.isAlive())
     {
         bot.setGreenLed(1);

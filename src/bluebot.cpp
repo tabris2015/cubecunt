@@ -196,12 +196,21 @@ void BlueBot::onModeRelease()
 }
 
 
+
 // motors
 
 void BlueBot::driveMotors(double left, double right)
 {
     rc_motor_set(left_m_channel, left);
     rc_motor_set(right_m_channel, right);
+}
+
+void BlueBot::driveUnicycle(double v, double w)
+{
+    double v_r = (2 * v + w * base_length_) / (2 * wheel_radius_);
+    double v_l = (2 * v - w * base_length_) / (2 * wheel_radius_);
+    
+    driveMotors(v_l, v_r);
 }
 
 //encoders
