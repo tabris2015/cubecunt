@@ -12,9 +12,8 @@ wheel_radius_(R),           // init robot wheel radius [m]
 base_length_(L),            // init robot base length [m]
 ticks_per_rev_(N),          // init encoder ticks per revolution
 microsPerClkTick_(1.0E6 * std::chrono::steady_clock::period::num / std::chrono::steady_clock::period::den), // compute micros per clock tick
-intervalMillis_(std::chrono::milliseconds(1000 / sample_rate_)), // compute interval in milliseconds
-currentStartTime_(std::chrono::steady_clock::now()),
-nextStartTime_(currentStartTime_)
+intervalMillis_(std::chrono::milliseconds(1000 / sample_rate_)) // compute interval in milliseconds
+
 {
 
     // asegurarse que otra instancia no esta corriendo
@@ -51,6 +50,8 @@ nextStartTime_(currentStartTime_)
     std::cout << "iniciando...\n";
 
     // iniciar hilo periodico
+    currentStartTime_ = std::chrono::steady_clock::now();
+    nextStartTime_ = currentStartTime_;
     innerLoopThread = std::thread(&BlueBot::updateStatePeriodic, this);
 
     std::cout << "system clock precision: "
@@ -153,7 +154,8 @@ void BlueBot::updateStatePeriodic()
             << std::chrono::duration_cast<std::chrono::microseconds>(currentStartTime_ - nextStartTime_).count() / 1000.0 << std::endl;
 
         // do task
-
+        updateImu();
+        updateOdometry();
         // determine next point 
         nextStartTime_ = currentStartTime_ + intervalMillis_;
 
