@@ -149,7 +149,8 @@ void BlueBot::updateStatePeriodic()
         currentStartTime_ = std::chrono::steady_clock::now();
 
         // print wake up error (jitter)
-        std::cout << "jitter[ms]: " << (currentStartTime_ - nextStartTime_).count() << std::endl;
+        std::cout << "jitter[us]: " 
+            << std::chrono::duration_cast<std::chrono::microseconds>(currentStartTime_ - nextStartTime_).count() << std::endl;
 
         // do task
 
