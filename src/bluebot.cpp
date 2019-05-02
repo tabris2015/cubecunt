@@ -174,7 +174,7 @@ void BlueBot::updateStatePeriodic()
         std::cout << "pos: (" << last_x_ << ", " << last_y_ << ") \t";
         angle_pid_.compute();
 
-        float v = 0.0;
+        float v = 0.1;
 
         // actuation
         driveUnicycle(v, w_);
