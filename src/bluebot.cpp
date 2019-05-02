@@ -6,14 +6,13 @@
 using blue::BlueBot;
 
 // constructor
-BlueBot::BlueBot(float R, float L, float N, int rate)   
+BlueBot::BlueBot(float R, float L, float N, int rate, bool loop_thread)   
 :sample_rate_(rate),        // init sample rate [Hz]
 wheel_radius_(R),           // init robot wheel radius [m]                                    
 base_length_(L),            // init robot base length [m]
 ticks_per_rev_(N),          // init encoder ticks per revolution
 microsPerClkTick_(1.0E6 * std::chrono::steady_clock::period::num / std::chrono::steady_clock::period::den), // compute micros per clock tick
 intervalMillis_(std::chrono::milliseconds(1000 / sample_rate_)) // compute interval in milliseconds
-
 {
 
     // asegurarse que otra instancia no esta corriendo
@@ -30,9 +29,7 @@ intervalMillis_(std::chrono::milliseconds(1000 / sample_rate_)) // compute inter
     std::cout << "iniciando leds...\n";
     initLeds();
 
-    // iniciar motores
-    std::cout << "iniciando motores...\n";
-    if(rc_motor_init() != 0) throw "error al iniciar motores\n";
+    
 
     // iniciar encoders
     std::cout << "iniciando encoders...\n";
@@ -50,15 +47,22 @@ intervalMillis_(std::chrono::milliseconds(1000 / sample_rate_)) // compute inter
     std::cout << "iniciando...\n";
 
     // iniciar hilo periodico
-    currentStartTime_ = std::chrono::steady_clock::now();
-    nextStartTime_ = currentStartTime_;
-    innerLoopThread = std::thread(&BlueBot::updateStatePeriodic, this);
+    if(loop_thread)
+    {
+        currentStartTime_ = std::chrono::steady_clock::now();
+        nextStartTime_ = currentStartTime_;
+        innerLoopThread = std::thread(&BlueBot::updateStatePeriodic, this);
+    }
 
     std::cout << "system clock precision: "
                 << microsPerClkTick_
                 << " us/tick \nPeriodo deseado: "
                 << intervalMillis_.count()
                 << " ms\n";
+
+    // iniciar motores
+    std::cout << "iniciando motores...\n";
+    if(rc_motor_init() != 0) throw "error al iniciar motores\n";
 
     rc_set_state(RUNNING);
 

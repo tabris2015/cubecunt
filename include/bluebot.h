@@ -95,7 +95,7 @@ public:
     // constructores
     // BlueBot(int ts=50);
     // constructor con parametros
-    BlueBot(float R, float L, float N, int rate=50);
+    BlueBot(float R, float L, float N, int rate=50, bool loop_thread=false);
     // Destructor
     ~BlueBot();
 
