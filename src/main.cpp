@@ -40,8 +40,9 @@ void testMotors(blue::BlueBot* bot)
 
 int main(void)
 {
+
     std::cout << "hola bola" << std::endl;
-    blue::BlueBot bot;
+    blue::BlueBot bot(0.065/2, 0.17, 1364.8, 50);
 
     // testMotors(&bot);
 

@@ -2,13 +2,21 @@
 #include <iostream>
 #include <iomanip>
 #include <thread>
-#include <chrono>
+
 using blue::BlueBot;
 
-rc_mpu_data_t BlueBot::imu_data_;
 // constructor
-BlueBot::BlueBot(int ts):sample_rate_(ts)               // iniciar tiempo de muestreo
+BlueBot::BlueBot(float R, float L, float N, int rate)   
+:sample_rate_(rate),        // init sample rate [Hz]
+wheel_radius_(R),           // init robot wheel radius [m]                                    
+base_length_(L),            // init robot base length [m]
+ticks_per_rev_(N),          // init encoder ticks per revolution
+microsPerClkTick_(1.0E6 * std::chrono::steady_clock::period::num / std::chrono::steady_clock::period::den), // compute micros per clock tick
+intervalMillis_(std::chrono::milliseconds(1000 / sample_rate_)), // compute interval in milliseconds
+currentStartTime_(std::chrono::steady_clock::now()),
+nextStartTime_(currentStartTime_)
 {
+
     // asegurarse que otra instancia no esta corriendo
     if(rc_kill_existing_process(2.0) < -2) throw "Instancia corriendo\n";
 
@@ -41,9 +49,20 @@ BlueBot::BlueBot(int ts):sample_rate_(ts)               // iniciar tiempo de mue
 
     // preparar para iniciar
     std::cout << "iniciando...\n";
+
+    // iniciar hilo periodico
+    innerLoopThread = std::thread(&BlueBot::updateStatePeriodic, this);
+
+    std::cout << "system clock precision: "
+                << microsPerClkTick_
+                << "usecs/tick \nPeriodo deseado: "
+                << intervalMillis_.count()
+                << "milliseconds\n";
+
     rc_set_state(RUNNING);
 
 }
+
 
 bool BlueBot::isAlive()
 {
@@ -80,29 +99,68 @@ void BlueBot::initImu()
 {
 
     imu_config_ = rc_mpu_default_config();
-    // imu_config_.i2c_bus = mpu_i2c_bus;
-    // imu_config_.gpio_interrupt_pin_chip = mpu_int_chip;
-    // imu_config_.gpio_interrupt_pin = mpu_int_pin;
-    // ignore priorities and scheduling for now
-    imu_config_.dmp_fetch_accel_gyro = 1;
     imu_config_.enable_magnetometer = 1;
     imu_config_.show_warnings = 1;
-    // imu_config_.compass_time_constant = 0.5;
-    // imu_config_.dmp_auto_calibrate_gyro = 1;
-    if(rc_mpu_initialize_dmp(&imu_data_, imu_config_)) throw "error al iniciar IMU\n";
+    
+    if(rc_mpu_initialize(&imu_data_, imu_config_)) throw "error al iniciar IMU\n";
+
     std::cout << "esperando que sensores se estabilicen...\n";
-    std::this_thread::sleep_for(std::chrono::seconds(3));
-    rc_mpu_set_dmp_callback(onImuInterrupt);
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    // rc_mpu_set_dmp_callback(onImuInterrupt);
 }
 
-void BlueBot::onImuInterrupt()
+// update imu
+void BlueBot::updateImu()
 {
-    std::cout << std::setprecision(4) << "heading: " << imu_data_.compass_heading*RAD_TO_DEG;
-    std::cout << std::setprecision(4) << " Acc: [" << imu_data_.accel[0] << ", "<< imu_data_.accel[1] << ", "<< imu_data_.accel[2] << "]\t ";
-    std::cout << std::setprecision(4) << " Gyro: [" << imu_data_.gyro[0] << ", "<< imu_data_.gyro[1] << ", "<< imu_data_.gyro[2] << "]\t ";
-    std::cout << std::setprecision(4) << " Mag: [" << imu_data_.mag[0] << ", "<< imu_data_.mag[1] << ", "<< imu_data_.mag[2] << "]\n ";
-    // std::cout << imu_data_.gyro_to_degs << std::endl;
+    rc_mpu_read_gyro(&imu_data_);
+    rc_mpu_read_mag(&imu_data_);
+    // compute raw heading
+    mag_heading_ = -atan2(imu_data_.mag[1], imu_data_.mag[0]);
+    // compute gyro heading
+
 }
+// odometry
+void BlueBot::updateOdometry()
+{
+    // use encoders for compute odometry
+    auto ticks = readEncoders();
+    auto delta_ticks = std::make_pair(ticks.first - last_ticks_.first, ticks.second - last_ticks_.second);
+
+    float dist_l = 2* M_PI * wheel_radius_ * (delta_ticks.first / ticks_per_rev_);
+    float dist_r = 2* M_PI * wheel_radius_ * (delta_ticks.second / ticks_per_rev_);
+
+    float dist_c = (dist_r + dist_l) / 2.0;
+
+    last_phi_ += (dist_r - dist_l) / base_length_;
+
+    last_x_ += dist_c * cosf(last_phi_);
+    last_y_ += dist_c * sinf(last_phi_);
+
+    std::cout << "pos from encoders: [" << last_x_ << ", " << last_y_ <<"]\n";
+}
+
+
+void BlueBot::updateStatePeriodic()
+{
+    // hilo para actualizar periodicamente 
+    while(rc_get_state() != EXITING)
+    {
+        // get current wakeup time
+        currentStartTime_ = std::chrono::steady_clock::now();
+
+        // print wake up error (jitter)
+        std::cout << "jitter[ms]: " << (currentStartTime_ - nextStartTime_).count() << std::endl;
+
+        // do task
+
+        // determine next point 
+        nextStartTime_ = currentStartTime_ + intervalMillis_;
+
+        // sleep until next period
+        std::this_thread::sleep_until(nextStartTime_);
+    }
+}
+
 void BlueBot::setRedLed(int val)
 {
     rc_led_set(RC_LED_RED, val);
