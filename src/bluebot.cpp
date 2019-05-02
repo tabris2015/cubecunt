@@ -205,8 +205,9 @@ void BlueBot::onModeRelease()
 
 void BlueBot::driveMotors(double left, double right)
 {
-    rc_motor_set(left_m_channel, left);
-    rc_motor_set(right_m_channel, right);
+    constexpr double scaler = 0.1;
+    rc_motor_set(left_m_channel, scaler * left);
+    rc_motor_set(right_m_channel, scaler * right);
 }
 
 void BlueBot::driveUnicycle(double v, double w)
@@ -214,7 +215,7 @@ void BlueBot::driveUnicycle(double v, double w)
     double v_r = (2 * v + w * base_length_) / (2 * wheel_radius_);
     double v_l = (2 * v - w * base_length_) / (2 * wheel_radius_);
     std::cout << "velocities: [" << v_l << ", " << v_r << "]\n";
-    driveMotors(0.1 * v_l, 0.1 * v_r);
+    driveMotors(v_l, v_r);
 }
 
 //encoders
