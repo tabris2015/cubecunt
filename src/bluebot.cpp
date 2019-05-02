@@ -117,6 +117,7 @@ void BlueBot::updateImu()
     rc_mpu_read_mag(&imu_data_);
     // compute raw heading
     mag_heading_ = -atan2(imu_data_.mag[1], imu_data_.mag[0]);
+    std::cout << "raw heading: " << mag_heading_ << std::endl;
     // compute gyro heading
 
 }
