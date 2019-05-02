@@ -170,6 +170,8 @@ void BlueBot::updateStatePeriodic()
         // do task
         // updateImu();
         updateOdometry();
+        // update goal
+        theta_goal_ = atan2f((y_goal_ - last_y_) , (x_goal_ - last_x_));
         // controller
         std::cout << std::setprecision(5) << "pos: (" << last_x_ << ", " << last_y_ << ") \t";
         angle_pid_.compute();
