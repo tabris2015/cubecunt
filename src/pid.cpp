@@ -15,7 +15,6 @@ angle_error_(is_angle)
 {
     setOutputLimits(-1.0, 1.0);
     setGains(kp, ki, kd);
-    std::cout << "pid gains: [" << kp_ << ", " << ki_ << ", " << kd_ << "]\n";
 }
 
 
@@ -42,6 +41,7 @@ void PidController::setGains(float kp, float ki, float kd)
     ki_ = ki * sample_time_sec_;
     kd_ = kd / sample_time_sec_;
 
+    std::cout << "new pid gains: [" << kp_ << ", " << ki_ << ", " << kd_ << "]\n";
 }
 
 void PidController::setOutputLimits(float min, float max)
