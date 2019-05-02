@@ -127,7 +127,7 @@ void BlueBot::updateOdometry()
     // use encoders for compute odometry
     auto ticks = readEncoders();
     auto delta_ticks = std::make_pair(ticks.first - last_ticks_.first, ticks.second - last_ticks_.second);
-
+    last_ticks_ = ticks;
     float dist_l = 2* M_PI * wheel_radius_ * (delta_ticks.first / ticks_per_rev_);
     float dist_r = 2* M_PI * wheel_radius_ * (delta_ticks.second / ticks_per_rev_);
 
