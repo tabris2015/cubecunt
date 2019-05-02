@@ -43,7 +43,7 @@ int main(void)
 
     std::cout << "iniciando" << std::endl;
     blue::BlueBot bot(0.065/2, 0.17, 1496.0, 50, true);
-
+    bot.setGoal(0.4,0.4);
     // testMotors(&bot);
     // std::cout << "both motors 0.15" << std::endl;
     // bot.driveMotors(0.15, 0.15);
