@@ -162,8 +162,8 @@ void BlueBot::updateStatePeriodic()
         currentStartTime_ = std::chrono::steady_clock::now();
 
         // print wake up error (jitter)
-        std::cout << "error[ms]: " 
-            << std::chrono::duration_cast<std::chrono::microseconds>(currentStartTime_ - nextStartTime_).count() / 1000.0 << std::endl;
+        // std::cout << "error[ms]: " 
+        //     << std::chrono::duration_cast<std::chrono::microseconds>(currentStartTime_ - nextStartTime_).count() / 1000.0 << std::endl;
 
         // do task
         // updateImu();
@@ -184,7 +184,7 @@ void BlueBot::updateStatePeriodic()
         std::cout << " w: " << w << std::endl;
         last_e_gtg_ = error;
 
-        if(distance(last_x_, last_y_, x_goal_, y_goal_) < 0.1)
+        if(distance(last_x_, last_y_, x_goal_, y_goal_) < 0.05)
         {
             v = 0;
             w = 0;
