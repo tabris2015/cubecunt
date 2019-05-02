@@ -55,9 +55,9 @@ nextStartTime_(currentStartTime_)
 
     std::cout << "system clock precision: "
                 << microsPerClkTick_
-                << "usecs/tick \nPeriodo deseado: "
+                << " us/tick \nPeriodo deseado: "
                 << intervalMillis_.count()
-                << "milliseconds\n";
+                << " ms\n";
 
     rc_set_state(RUNNING);
 
@@ -149,8 +149,8 @@ void BlueBot::updateStatePeriodic()
         currentStartTime_ = std::chrono::steady_clock::now();
 
         // print wake up error (jitter)
-        std::cout << "jitter[us]: " 
-            << std::chrono::duration_cast<std::chrono::microseconds>(currentStartTime_ - nextStartTime_).count() << std::endl;
+        std::cout << "error[ms]: " 
+            << std::chrono::duration_cast<std::chrono::microseconds>(currentStartTime_ - nextStartTime_).count() / 1000.0 << std::endl;
 
         // do task
 
