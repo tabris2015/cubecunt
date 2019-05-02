@@ -36,6 +36,7 @@ void PidController::setGains(float kp, float ki, float kd)
     if(kp < 0 || ki < 0 || kd < 0) return;
 
     float sample_time_sec_ = sample_time_.count() / 1000000;
+    std::cout << "sample time s pid: " << sample_time_sec_ << std::endl;
     kp_ = kp;
     ki_ = ki * sample_time_sec_;
     kd_ = kd / sample_time_sec_;
