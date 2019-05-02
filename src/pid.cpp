@@ -76,9 +76,9 @@ void PidController::compute()
     *my_output_ = output;
 
     std::cout << "set: " << *my_setpoint_
-                << " in: " << input
-                << " err: " << error 
-                << " out: " << output << std::endl;
+                << " \tin: " << input
+                << " \terr: " << error 
+                << " \tout: " << output << std::endl;
 
     last_input_ = input;
 }

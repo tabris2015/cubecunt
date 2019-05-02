@@ -171,10 +171,10 @@ void BlueBot::updateStatePeriodic()
         // updateImu();
         updateOdometry();
         // controller
-        // std::cout << "error: " << e_gtg_ << " corrected: " << error;
+        std::cout << "pos: (" << last_x_ << ", " << last_y_ << ") \t";
         angle_pid_.compute();
 
-        float v = 0.08;
+        float v = 0.0;
 
         // actuation
         driveUnicycle(v, w_);
