@@ -219,6 +219,7 @@ void BlueBot::setGoToGoalGains(float kp, float ki, float kd)
     Kp_gtg_ = kp;
     Ki_gtg_ = ki;
     Kd_gtg_ = kd;
+    angle_pid_.setGains(Kp_gtg_, Ki_gtg_, Kd_gtg_);
 }
 
 void BlueBot::onPausePress()
