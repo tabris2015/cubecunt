@@ -217,7 +217,7 @@ void BlueBot::setGoal(float x_goal, float y_goal)
 {
     x_goal_ = x_goal;
     y_goal_ = y_goal;
-    theta_goal_ = atanf((y_goal_ - last_y_) / (x_goal_ - last_x_));
+    theta_goal_ = atan2f((y_goal_ - last_y_) , (x_goal_ - last_x_));
 
     std::cout << "new goal: [" << x_goal_ << ", " << y_goal_ << "] theta: " << theta_goal_ << std::endl;
 }
