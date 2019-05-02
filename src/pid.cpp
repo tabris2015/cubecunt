@@ -15,6 +15,7 @@ angle_error_(is_angle)
 {
     setOutputLimits(-1.0, 1.0);
     setGains(kp, ki, kd);
+    std::cout << "pid gains: [" << kp_ << ", " << ki_ << ", " << kd_ << "]\n";
 }
 
 
