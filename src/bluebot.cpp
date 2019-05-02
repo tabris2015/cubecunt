@@ -1,9 +1,10 @@
-#include <bluebot.h>
+#include "bluebot.h"
 #include <iostream>
 #include <iomanip>
 #include <thread>
 
 using blue::BlueBot;
+using blue::PidController;
 
 // constructor
 BlueBot::BlueBot(float R, float L, float N, int rate, bool loop_thread)   
@@ -12,9 +13,13 @@ wheel_radius_(R),           // init robot wheel radius [m]
 base_length_(L),            // init robot base length [m]
 ticks_per_rev_(N),          // init encoder ticks per revolution
 microsPerClkTick_(1.0E6 * std::chrono::steady_clock::period::num / std::chrono::steady_clock::period::den), // compute micros per clock tick
-intervalMillis_(std::chrono::milliseconds(1000 / sample_rate_)), // compute interval in milliseconds
-last_x_(0), last_y_(0), last_phi_(0), x_goal_(last_x_), y_goal_(last_y_),
-Kp_gtg_(2), Ki_gtg_(0), Kd_gtg_(0)
+interval_us_(std::chrono::microseconds(1000000 / sample_rate_)), // compute interval in microseconds
+last_x_(0), 
+last_y_(0), 
+last_phi_(0), 
+x_goal_(last_x_), y_goal_(last_y_),
+Kp_gtg_(1), Ki_gtg_(0), Kd_gtg_(0), 
+angle_pid_(&last_phi_, &w_, &theta_goal_, Kp_gtg_, Ki_gtg_, Kd_gtg_, interval_us_, true)
 {
 
     // asegurarse que otra instancia no esta corriendo
@@ -30,8 +35,6 @@ Kp_gtg_(2), Ki_gtg_(0), Kd_gtg_(0)
     // iniciar leds
     std::cout << "iniciando leds...\n";
     initLeds();
-
-    
 
     // iniciar encoders
     std::cout << "iniciando encoders...\n";
@@ -57,16 +60,18 @@ Kp_gtg_(2), Ki_gtg_(0), Kd_gtg_(0)
     // iniciar hilo periodico
     if(loop_thread)
     {
-        currentStartTime_ = std::chrono::steady_clock::now();
-        nextStartTime_ = currentStartTime_;
+        current_start_time_ = std::chrono::steady_clock::now();
+        next_start_time_ = current_start_time_;
         innerLoopThread = std::thread(&BlueBot::updateStatePeriodic, this);
+        // iniciar pid
+
     }
 
     std::cout << "system clock precision: "
                 << microsPerClkTick_
                 << " us/tick \nPeriodo deseado: "
-                << intervalMillis_.count()
-                << " ms\n";
+                << interval_us_.count()
+                << " us\n";
     rc_set_state(RUNNING);
 
 }
@@ -149,6 +154,7 @@ void BlueBot::updateOdometry()
     // std::cout << "[x, y, phi]: [" << last_x_ << ", " << last_y_ << ", " << last_phi_ << "]\n";
 }
 
+// optimize
 float BlueBot::distance(float x1, float y1, float x2, float y2)
 {
     return sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
@@ -160,53 +166,31 @@ void BlueBot::updateStatePeriodic()
     while(rc_get_state() != EXITING)
     {
         // get current wakeup time
-        currentStartTime_ = std::chrono::steady_clock::now();
-
-        // print wake up error (jitter)
-        // std::cout << "error[ms]: " 
-        //     << std::chrono::duration_cast<std::chrono::microseconds>(currentStartTime_ - nextStartTime_).count() / 1000.0 << std::endl;
-
+        current_start_time_ = std::chrono::steady_clock::now();
         // do task
         // updateImu();
         updateOdometry();
         // controller
-        e_gtg_ = theta_goal_ - last_phi_;
-        auto error = atan2f(sinf(e_gtg_), cosf(e_gtg_));
         // std::cout << "error: " << e_gtg_ << " corrected: " << error;
+        angle_pid_.compute();
+
         float v = 0.08;
 
-
-        delta_e_gtg_ = error - last_e_gtg_;
-
-        e_sum_gtg_ += error;
-
-        float w = Kp_gtg_ * error + Kd_gtg_ * delta_e_gtg_ + Ki_gtg_ * e_sum_gtg_;
-        
-        // std::cout << " w: " << w << std::endl;
-        last_e_gtg_ = error;
-        auto dist_to_goal = distance(last_x_, last_y_, x_goal_, y_goal_);
-        // std::cout << "distancia al objetivo: " << dist_to_goal * 100 << std::endl;
-        if(dist_to_goal < 0.04)
-        {
-            v = 0;
-            w = 0;
-            // std::cout << "objetivo alcanzado! \n";
-        } 
         // actuation
-        driveUnicycle(v, w);
+        driveUnicycle(v, w_);
         // print state
         std::cout << theta_goal_ << ","
                     << last_phi_ << ","
-                    << error << ","
-                    << w << ","
-                    << dist_to_goal << ","
+                    << theta_goal_ - last_phi_ << ","
+                    << w_ << ","
+                    << distance(last_x_, last_y_, x_goal_, y_goal_) << ","
                     << v << "\n";
 
         // determine next point 
-        nextStartTime_ = currentStartTime_ + intervalMillis_;
+        next_start_time_ = current_start_time_ + interval_us_;
 
         // sleep until next period
-        std::this_thread::sleep_until(nextStartTime_);
+        std::this_thread::sleep_until(next_start_time_);
     }
 }
 

@@ -26,6 +26,49 @@ enum class RobotState
     ERROR
 };
 
+class PidController
+{
+private:
+    // sample time
+    std::chrono::microseconds sample_time_;
+
+    std::chrono::steady_clock::time_point lastTime_;
+    float kp_;
+    float ki_;
+    float kd_;
+    // pointers to variables
+    float * my_input_;
+    float * my_output_;
+    float * my_setpoint_;
+
+    float out_min_;
+    float out_max_;
+
+    float out_sum_;
+    float err_sum_;
+    float last_err_;
+
+    float i_term_;
+    float last_input_;
+
+    bool angle_error_;
+
+
+public:
+    PidController(float * input, float * output, float * setpoint, 
+                    float kp, float ki, float kd, 
+                    std::chrono::microseconds sample_time, bool is_angle=false);
+    // PidController(float kp, float ki, float kd, std::chrono::microseconds sample_time);
+    
+    void compute(void);
+    void setOutputLimits(float min, float max);
+    void setGains(float kp, float ki, float kd);
+    void setSampleTime(std::chrono::microseconds new_sample_time);
+    
+};
+
+
+
 class BlueBot
 {
 private:
@@ -46,13 +89,11 @@ private:
     int sample_rate_;
     // threads for control loop
     const double microsPerClkTick_;
-    std::chrono::milliseconds intervalMillis_;
-    std::chrono::steady_clock::time_point currentStartTime_;
-    std::chrono::steady_clock::time_point nextStartTime_;
+    std::chrono::microseconds interval_us_;
+    std::chrono::steady_clock::time_point current_start_time_;
+    std::chrono::steady_clock::time_point next_start_time_;
     std::thread innerLoopThread;
 
-
-    
     float vel_l_;
     float vel_r_;
     float v_;
@@ -69,6 +110,8 @@ private:
     
     // controllers
     // 
+    PidController angle_pid_;
+
     float Kp_gtg_;
     float Ki_gtg_;
     float Kd_gtg_;
