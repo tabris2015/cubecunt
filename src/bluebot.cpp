@@ -139,7 +139,7 @@ void BlueBot::updateOdometry()
     last_y_ += dist_c * sinf(last_phi_);
 
     std::cout << "raw ticks: [" << ticks.first << ", " << ticks.second <<"]\n";
-    std::cout << "pos from encoders: [" << last_x_ << ", " << last_y_ <<"]\n";
+    std::cout << "[x, y, phi]: [" << last_x_ << ", " << last_y_ << ", " << last_phi_ << "]\n";
 }
 
 
