@@ -185,7 +185,7 @@ void BlueBot::updateStatePeriodic()
         std::cout << " w: " << w << std::endl;
         last_e_gtg_ = error;
 
-        if(distance(last_x_, last_y_, x_goal_, y_goal_) < 0.05)
+        if(distance(last_x_, last_y_, x_goal_, y_goal_) < 0.02)
         {
             v = 0;
             w = 0;
