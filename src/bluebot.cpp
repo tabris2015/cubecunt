@@ -146,7 +146,7 @@ void BlueBot::updateOdometry()
     last_y_ += dist_c * sinf(last_phi_);
 
     // std::cout << "raw ticks: [" << ticks.first << ", " << ticks.second <<"]\n";
-    std::cout << "[x, y, phi]: [" << last_x_ << ", " << last_y_ << ", " << last_phi_ << "]\n";
+    // std::cout << "[x, y, phi]: [" << last_x_ << ", " << last_y_ << ", " << last_phi_ << "]\n";
 }
 
 float BlueBot::distance(float x1, float y1, float x2, float y2)
@@ -172,7 +172,7 @@ void BlueBot::updateStatePeriodic()
         // controller
         e_gtg_ = theta_goal_ - last_phi_;
         auto error = atan2f(sinf(e_gtg_), cosf(e_gtg_));
-        std::cout << "error: " << e_gtg_ << " corrected: " << error;
+        // std::cout << "error: " << e_gtg_ << " corrected: " << error;
         float v = 0.08;
 
 
@@ -182,17 +182,25 @@ void BlueBot::updateStatePeriodic()
 
         float w = Kp_gtg_ * error + Kd_gtg_ * delta_e_gtg_ + Ki_gtg_ * e_sum_gtg_;
         
-        std::cout << " w: " << w << std::endl;
+        // std::cout << " w: " << w << std::endl;
         last_e_gtg_ = error;
-
-        if(distance(last_x_, last_y_, x_goal_, y_goal_) < 0.02)
+        auto dist_to_goal = distance(last_x_, last_y_, x_goal_, y_goal_);
+        // std::cout << "distancia al objetivo: " << dist_to_goal * 100 << std::endl;
+        if(dist_to_goal < 0.04)
         {
             v = 0;
             w = 0;
-            std::cout << "objetivo alcanzado! \n";
+            // std::cout << "objetivo alcanzado! \n";
         } 
         // actuation
         driveUnicycle(v, w);
+        // print state
+        std::cout << theta_goal_ << ","
+                    << last_phi_ << ","
+                    << error << ","
+                    << w << ","
+                    << dist_to_goal << ","
+                    << v << "\n";
 
         // determine next point 
         nextStartTime_ = currentStartTime_ + intervalMillis_;
@@ -259,7 +267,7 @@ void BlueBot::driveUnicycle(double v, double w)
 {
     double v_r = (2 * v + w * base_length_) / (2 * wheel_radius_);
     double v_l = (2 * v - w * base_length_) / (2 * wheel_radius_);
-    std::cout << "velocities: [" << v_l << ", " << v_r << "]\n";
+    // std::cout << "velocities: [" << v_l << ", " << v_r << "]\n";
     driveMotors(v_l, v_r);
 }
 
