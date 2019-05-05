@@ -162,7 +162,7 @@ public:
     // constructores
     // BlueBot(int ts=50);
     // constructor con parametros
-    BlueBot(float R, float L, float N, int rate=50, int motor_rate=100, bool loop_thread=false, bool motor_thread=false);
+    BlueBot(float R, float L, float N, int rate=50, int motor_rate=50, bool loop_thread=false, bool motor_thread=false);
     void initMainThread();
     void initMotorThread();
     // Destructor
