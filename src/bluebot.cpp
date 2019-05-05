@@ -244,7 +244,7 @@ void BlueBot::updateMotorPeriodic()
         std::cout << micros.count() << ", "
                     << v_ << ", "
                     << v_l << ","
-                    << delta_ticks << ", ",
+                    << delta_ticks << ", "
                     << vel_rad_s << ", "
                     << vel_m_s << "\n";
         
