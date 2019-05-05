@@ -13,7 +13,9 @@ wheel_radius_(R),           // init robot wheel radius [m]
 base_length_(L),            // init robot base length [m]
 ticks_per_rev_(N),          // init encoder ticks per revolution
 microsPerClkTick_(1.0E6 * std::chrono::steady_clock::period::num / std::chrono::steady_clock::period::den), // compute micros per clock tick
-interval_us_(std::chrono::microseconds(1000000 / sample_rate_)), motor_interval_us_(std::chrono::microseconds(1000000 / motor_sample_rate_)), // compute interval in microseconds
+interval_us_(std::chrono::microseconds(1000000 / sample_rate_)), 
+motor_interval_us_(std::chrono::microseconds(1000000 / motor_sample_rate_)), // compute interval in microseconds
+
 last_x_(0), 
 last_y_(0), 
 last_phi_(0), 
@@ -257,7 +259,7 @@ void BlueBot::updateMotorPeriodic()
         
         // print time, in left, out left, in right, out right
         auto micros = std::chrono::duration_cast<std::chrono::microseconds> (std::chrono::steady_clock::now() - init_time_);
-        std::cout << std::setprecision(5) <<
+        std::cout << std::setprecision(5)
                     << micros.count() << ", "
                     << setpoint_l_ << ","
                     << pwm_l_ << ","

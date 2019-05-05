@@ -105,11 +105,11 @@ private:
     bool loop_thread_enabled_;
     bool motor_thread_enabled_;
 
-    // motor actual velocities
+    // motor setpoints
     float setpoint_l_;
     float setpoint_r_;
     
-    // motor setpoints
+    // motor velocities
     float vel_l_;
     float vel_r_;
     // motor outputs
