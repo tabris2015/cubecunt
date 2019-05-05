@@ -8,14 +8,17 @@ using namespace std::chrono;
 int main(int argc, char *argv[])
 {
 
-    float kp = atoi(argv[1]);
-    float ki = atoi(argv[2]);
-    float kd = atoi(argv[3]);
+    float kp = atof(argv[1]);
+    float ki = atof(argv[2]);
+    float kd = atof(argv[3]);
     
     double vel = atof(argv[4]);
+
+    int motor_rate = atoi(argv[5]);
+
     
     std::cout << "iniciando" << std::endl;
-    blue::BlueBot bot(0.065/2, 0.17, 1496.0);
+    blue::BlueBot bot(0.065/2, 0.17, 1496.0, 40, motor_rate);
     // init pids
     bot.setMotorGains(kp, ki, kd);
     // set velocity to zero
