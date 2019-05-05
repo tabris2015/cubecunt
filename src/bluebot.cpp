@@ -252,14 +252,17 @@ void BlueBot::updateMotorPeriodic()
         left_motor_pid_.compute();
         right_motor_pid_.compute();
         // move motors
+
         driveMotors(pwm_l_, pwm_r_);
         
         // print time, in left, out left, in right, out right
         auto micros = std::chrono::duration_cast<std::chrono::microseconds> (std::chrono::steady_clock::now() - init_time_);
         std::cout << micros.count() << ", "
                     << setpoint_l_ << ","
+                    << pwm_l_ << ","
                     << vel_l_ << ", "
                     << setpoint_r_ << ", "
+                    << pwm_r_ << ","
                     << vel_r_ << "\n";
         
         // determine next point 
