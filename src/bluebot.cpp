@@ -18,8 +18,12 @@ last_x_(0),
 last_y_(0), 
 last_phi_(0), 
 x_goal_(last_x_), y_goal_(last_y_),
-Kp_gtg_(1), Ki_gtg_(0), Kd_gtg_(0), 
+Kp_gtg_(0), Ki_gtg_(0), Kd_gtg_(0), 
 angle_pid_(&last_phi_, &w_, &theta_goal_, Kp_gtg_, Ki_gtg_, Kd_gtg_, interval_us_, true),
+
+Kp_motor_(0), Ki_motor_(0), Kd_motor_(0),
+left_motor_pid_(&vel_l_, &pwm_l_, &setpoint_l_, Kp_motor_, Ki_motor_, Kd_motor_, motor_interval_us_),
+right_motor_pid_(&vel_r_, &pwm_r_, &setpoint_r_, Kp_motor_, Ki_motor_, Kd_motor_, motor_interval_us_),
 loop_thread_enabled_(loop_thread), motor_thread_enabled_(motor_thread)
 {
 
@@ -218,43 +222,48 @@ void BlueBot::updateStatePeriodic()
 
 void BlueBot::updateMotorPeriodic()
 {
-    int last_ticks = 0;
+    auto last_ticks = readEncoders();
     // hilo para actualizar periodicamente 
     while(rc_get_state() != EXITING)
     {
         // get current wakeup time
         motor_current_start_time_ = std::chrono::steady_clock::now();
         // do task
+        // setpoint
+        auto motor_setpoints = uniToDiff(v_, w_);
+        setpoint_l_ = motor_setpoints.first;
+        setpoint_r_ = motor_setpoints.second;
 
-        double v_l = (2 * v_ - w_ * base_length_) / (2 * wheel_radius_);    // [rad/s]
+        // compute velocity from encoders
+        auto ticks = readEncoders();
 
-        auto ticks = readEncoders().first;
-
-        auto delta_ticks = ticks - last_ticks;                              // [ticks]
-
+        auto delta_ticks_l = ticks.first - last_ticks.first;                              // [ticks] left
+        auto delta_ticks_r = ticks.second - last_ticks.second;                              // [ticks] left
         
-        float phi_l = 2* M_PI * (delta_ticks / ticks_per_rev_);        // [rad]
+        float phi_l = 2* M_PI * (delta_ticks_l / ticks_per_rev_);        // [rad]
+        vel_l_ = phi_l / (motor_interval_us_.count() / 1000000.0);     // [rad/s]
 
-        float vel_rad_s = phi_l / (motor_interval_us_.count() / 1000000.0);     // [rad/s]
-
-        float vel_m_s = vel_rad_s * wheel_radius_;                              // [m/s]
+        float phi_r = 2* M_PI * (delta_ticks_r / ticks_per_rev_);        // [rad]
+        vel_r_ = phi_r / (motor_interval_us_.count() / 1000000.0);     // [rad/s]
         
-        // move left motor
-        rc_motor_set(left_m_channel, v_l);
+        // compute pids
+        left_motor_pid_.compute();
+        right_motor_pid_.compute();
+        // move motors
+        driveMotors(pwm_l_, pwm_r_);
         
-        // for now, only print time, v, output, delta ticks, angular velocity
+        // print time, in left, out left, in right, out right
         auto micros = std::chrono::duration_cast<std::chrono::microseconds> (std::chrono::steady_clock::now() - init_time_);
         std::cout << micros.count() << ", "
-                    << v_ << ", "
-                    << v_l << ","
-                    << delta_ticks << ", "
-                    << vel_rad_s << ", "
-                    << vel_m_s << "\n";
+                    << setpoint_l_ << ","
+                    << vel_l_ << ", "
+                    << setpoint_r_ << ", "
+                    << vel_r_ << "\n";
         
         // determine next point 
         motor_next_start_time_ = motor_current_start_time_ + motor_interval_us_;
 
-        last_ticks = readEncoders().first;
+        last_ticks = readEncoders();
         // sleep until next period
         std::this_thread::sleep_until(motor_next_start_time_);
     }
@@ -290,6 +299,16 @@ void BlueBot::setGoToGoalGains(float kp, float ki, float kd)
     angle_pid_.setGains(Kp_gtg_, Ki_gtg_, Kd_gtg_);
 }
 
+
+void BlueBot::setMotorGains(float kp, float ki, float kd)
+{
+    Kp_motor_ = kp;
+    Ki_motor_ = ki;
+    Kd_motor_ = kd;
+    left_motor_pid_.setGains(Kp_motor_, Ki_motor_, Kd_motor_);
+    right_motor_pid_.setGains(Kp_motor_, Ki_motor_, Kd_motor_);
+    
+}
 void BlueBot::setLinearVel(float v)
 {
     v_ = v;
@@ -316,9 +335,8 @@ void BlueBot::onModeRelease()
 
 void BlueBot::driveMotors(double left, double right)
 {
-    constexpr double scaler = 0.1;
-    rc_motor_set(left_m_channel, scaler * left);
-    rc_motor_set(right_m_channel, scaler * right);
+    rc_motor_set(left_m_channel, left);
+    rc_motor_set(right_m_channel, right);
 }
 
 void BlueBot::driveUnicycle(double v, double w)
@@ -329,6 +347,14 @@ void BlueBot::driveUnicycle(double v, double w)
     driveMotors(v_l, v_r);
 }
 
+std::pair<double, double> BlueBot::uniToDiff(double v, double w)
+{
+    double v_l = (2 * v - w * base_length_) / (2 * wheel_radius_);
+    double v_r = (2 * v + w * base_length_) / (2 * wheel_radius_);
+    return std::make_pair(v_l, v_r);
+}
+
+
 //encoders
 std::pair<int, int> BlueBot::readEncoders()
 {
@@ -338,7 +364,13 @@ std::pair<int, int> BlueBot::readEncoders()
 
 BlueBot::~BlueBot()
 {
+
     std::cout << "limpiando...\n";
+    if(innerLoopThread.joinable())
+        innerLoopThread.join();
+    if(motorLoopThread.joinable())
+        motorLoopThread.join();
+    
     rc_led_set(RC_LED_GREEN, 0);
 	rc_led_set(RC_LED_RED, 0);
     rc_button_cleanup();

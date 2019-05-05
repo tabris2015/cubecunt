@@ -105,8 +105,18 @@ private:
     bool loop_thread_enabled_;
     bool motor_thread_enabled_;
 
+    // motor actual velocities
+    float setpoint_l_;
+    float setpoint_r_;
+    
+    // motor setpoints
     float vel_l_;
     float vel_r_;
+    // motor outputs
+    float pwm_l_;
+    float pwm_r_;
+
+    // unicycle setpoints
     float v_;
     float w_;
     float last_x_;
@@ -122,10 +132,17 @@ private:
     // controllers
     // 
     PidController angle_pid_;
+    PidController left_motor_pid_;
+    PidController right_motor_pid_;
 
     float Kp_gtg_;
     float Ki_gtg_;
     float Kd_gtg_;
+
+    float Kp_motor_;
+    float Ki_motor_; 
+    float Kd_motor_;
+
     float e_gtg_;
     float last_e_gtg_;
     float e_sum_gtg_;
@@ -148,7 +165,7 @@ private:
     void initImu();
 
     // robot model
-    std::pair<float, float> uniToDiff(float v, float w);
+    std::pair<double, double> uniToDiff(double v, double w);
 
     void updateOdometry();
     void updateImu();
@@ -187,6 +204,8 @@ public:
     void setGoToGoalGains(float kp, float ki, float kd);
     void setAngle(float theta_goal);
     void setLinearVel(float v);
+    void setMotorGains(float kp, float ki, float kd);
+
 };
 
 }
