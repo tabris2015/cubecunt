@@ -17,11 +17,11 @@ file(GLOB pru_src "./librobotcontrol/library/src/pru/*.c")
 
 add_library(robotcontrol SHARED ${lib_src} ${bmp_src} ${io_src} ${math_src} ${mpu_src} ${pru_src} )
 
-add_executable(cubecunt src/main.cpp src/pid.cpp src/bluebot.cpp)
+# add_executable(cubecunt src/main.cpp src/pid.cpp src/bluebot.cpp)
 add_executable(motor_test src/motor_test.cpp src/pid.cpp src/bluebot.cpp)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
-target_link_libraries(cubecunt Threads::Threads robotcontrol)
+# target_link_libraries(cubecunt Threads::Threads robotcontrol)
 target_link_libraries(motor_test Threads::Threads robotcontrol)
