@@ -235,7 +235,9 @@ void BlueBot::updateMotorPeriodic()
         auto delta_ticks = std::make_pair(ticks.first - last_ticks.first, ticks.second - last_ticks.second);
         float phi_l = 2* M_PI * (delta_ticks.first / ticks_per_rev_);        // en radianes
         float vel_l = phi_l / (motor_interval_us_.count() / 1000000.0);
-
+        // move left motor
+        rc_motor_set(left_m_channel, v_l);
+        
         // for now, only print time, v, output, delta ticks, angular velocity
         auto micros = std::chrono::duration_cast<std::chrono::microseconds> (std::chrono::steady_clock::now() - init_time_);
         std::cout << micros.count() << ", "

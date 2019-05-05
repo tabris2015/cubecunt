@@ -172,7 +172,11 @@ public:
     void setRedLed(int val);
     void setGreenLed(int val);
 
+    
+    // velocities
+    void setUnicycle(double v, double w) {v_ = v; w_ = w;}
     // motors
+
     void driveMotors(double left, double right);
     void driveUnicycle(double v, double w);
     std::pair<int, int> readEncoders();
