@@ -239,7 +239,7 @@ void BlueBot::updateMotorPeriodic()
         auto ticks = readEncoders();
 
         auto delta_ticks_l = ticks.first - last_ticks.first;                              // [ticks] left
-        
+
         auto delta_ticks_r = ticks.second - last_ticks.second;                              // [ticks] right
         
         float phi_l = 2* M_PI * (delta_ticks_l / ticks_per_rev_);        // [rad]
@@ -368,6 +368,7 @@ BlueBot::~BlueBot()
 {
 
     std::cout << "limpiando...\n";
+    rc_set_state(EXITING);
     if(innerLoopThread.joinable())
         innerLoopThread.join();
     if(motorLoopThread.joinable())
