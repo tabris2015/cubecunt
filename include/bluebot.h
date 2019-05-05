@@ -84,15 +84,26 @@ private:
     float mag_heading_;
 
     // timing data
+    std::chrono::steady_clock::time_point init_time_;
     std::chrono::steady_clock::time_point last_time_;
     std::pair<int, int> last_ticks_;
-    int sample_rate_;
     // threads for control loop
     const double microsPerClkTick_;
+    int sample_rate_;
     std::chrono::microseconds interval_us_;
     std::chrono::steady_clock::time_point current_start_time_;
     std::chrono::steady_clock::time_point next_start_time_;
     std::thread innerLoopThread;
+    
+
+    // motor thread
+    int motor_sample_rate_;
+    std::chrono::microseconds motor_interval_us_;
+    std::chrono::steady_clock::time_point motor_current_start_time_;
+    std::chrono::steady_clock::time_point motor_next_start_time_;
+    std::thread motorLoopThread;
+    bool loop_thread_enabled_;
+    bool motor_thread_enabled_;
 
     float vel_l_;
     float vel_r_;
@@ -147,10 +158,13 @@ private:
 
 public:
     void updateStatePeriodic();
+    void updateMotorPeriodic();
     // constructores
     // BlueBot(int ts=50);
     // constructor con parametros
-    BlueBot(float R, float L, float N, int rate=50, bool loop_thread=false);
+    BlueBot(float R, float L, float N, int rate=50, int motor_rate=100, bool loop_thread=false, bool motor_thread=false);
+    void initMainThread();
+    void initMotorThread();
     // Destructor
     ~BlueBot();
 
