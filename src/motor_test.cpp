@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
     std::cout << "iniciando" << std::endl;
     blue::BlueBot bot(0.065/2, 0.17, 1496.0);
     // set velocity to zero
+    bot.initMotorThread();
     bot.setUnicycle(0, 0);
     bot.setRedLed(1);
     bot.setGreenLed(0);
