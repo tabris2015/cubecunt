@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     double vel = atof(argv[4]);
     
     std::cout << "iniciando" << std::endl;
-    blue::BlueBot bot(0.065/2, 0.17, 1496.0, 40, motor_rate);
+    blue::BlueBot bot(0.065/2, 0.17, 1496.0);
     // init pids
     bot.setMotorGains(kp, ki, kd);
     // set velocity to zero
