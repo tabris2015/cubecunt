@@ -226,11 +226,7 @@ void BlueBot::updateMotorPeriodic()
         motor_current_start_time_ = std::chrono::steady_clock::now();
         // do task
         double v_l = (2 * v_ - w_ * base_length_) / (2 * wheel_radius_);
-        double v_r = (2 * v_ + w_ * base_length_) / (2 * wheel_radius_);
-        
-        v_l *= 0.1;
-        v_r *= 0.1;
-        
+ 
         auto ticks = readEncoders().first;
 
         auto delta_ticks = ticks - last_ticks;
@@ -238,7 +234,8 @@ void BlueBot::updateMotorPeriodic()
         last_ticks = readEncoders().first;
         
         float phi_l = 2* M_PI * (delta_ticks / ticks_per_rev_);        // en radianes
-        float vel_l = phi_l / (motor_interval_us_.count() / 1000000.0);
+        float vel_rad_s = phi_l / (motor_interval_us_.count() / 1000000.0);
+        float vel_m_s = vel_rad_s * wheel_radius_;
         // move left motor
         rc_motor_set(left_m_channel, v_l);
         
@@ -247,8 +244,9 @@ void BlueBot::updateMotorPeriodic()
         std::cout << micros.count() << ", "
                     << v_ << ", "
                     << v_l << ","
-                    << delta_ticks << ", "
-                    << vel_l << "\n";
+                    << delta_ticks << ", ",
+                    << vel_rad_s << ", "
+                    << vel_m_s << "\n";
         
         // determine next point 
         motor_next_start_time_ = motor_current_start_time_ + motor_interval_us_;
