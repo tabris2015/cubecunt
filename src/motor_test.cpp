@@ -17,13 +17,13 @@ int main(int argc, char *argv[])
     int motor_rate = atoi(argv[5]);
 
     
-    std::cout << "iniciando" << std::endl;
+    std::cout << "---------------------------------------> iniciando" << std::endl;
     blue::BlueBot bot(0.065/2, 0.17, 1496.0, 40, motor_rate);
     // init pids
-    std::cout << "iniciando pid motores" << std::endl;
+    std::cout << "---------------------------------------> iniciando pid motores" << std::endl;
     bot.setMotorGains(kp, ki, kd);
     // set velocity to zero
-    std::cout << "iniciando hilo motores" << std::endl;
+    std::cout << "---------------------------------------> iniciando hilo motores" << std::endl;
     bot.initMotorThread();
     bot.driveMotors(0,0);
     bot.setUnicycle(0, 0);
@@ -33,8 +33,9 @@ int main(int argc, char *argv[])
     std::this_thread::sleep_for(milliseconds(2000));
 
     bot.setUnicycle(0, 0);
-    std::this_thread::sleep_for(milliseconds(1500));
+    std::this_thread::sleep_for(milliseconds(1000));
 
+    std::cout << "---------------------------------------> FIN <-------------------------------" << std::endl;
 
     return 0;
 }
