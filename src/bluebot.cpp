@@ -218,7 +218,7 @@ void BlueBot::updateStatePeriodic()
 
 void BlueBot::updateMotorPeriodic()
 {
-    std::pair<int, int> last_ticks;
+    std::pair<int, int> last_ticks{0,0};
     // hilo para actualizar periodicamente 
     while(rc_get_state() != EXITING)
     {
@@ -233,7 +233,9 @@ void BlueBot::updateMotorPeriodic()
         
         auto ticks = readEncoders();
         auto delta_ticks = std::make_pair(ticks.first - last_ticks.first, ticks.second - last_ticks.second);
-        last_ticks_ = ticks;
+
+        last_ticks_ = readEncoders();
+        
         float phi_l = 2* M_PI * (delta_ticks.first / ticks_per_rev_);        // en radianes
         float vel_l = phi_l / (motor_interval_us_.count() / 1000000.0);
         // move left motor
