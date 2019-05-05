@@ -257,7 +257,8 @@ void BlueBot::updateMotorPeriodic()
         
         // print time, in left, out left, in right, out right
         auto micros = std::chrono::duration_cast<std::chrono::microseconds> (std::chrono::steady_clock::now() - init_time_);
-        std::cout << micros.count() << ", "
+        std::cout << std::setprecision(5) <<
+                    << micros.count() << ", "
                     << setpoint_l_ << ","
                     << pwm_l_ << ","
                     << vel_l_ << ", "
