@@ -202,7 +202,7 @@ void BlueBot::updateStatePeriodic()
         std::cout << "dist: " << dist_to_goal << "\t";
         if(dist_to_goal < 0.04) v_ = 0.0;
         // actuation
-        driveUnicycle(v_, w_);
+        // driveUnicycle(v_, w_);
         // print state
         // std::cout << theta_goal_ << ","
         //             << last_phi_ << ","
@@ -231,6 +231,7 @@ void BlueBot::updateMotorPeriodic()
         // do task
         // setpoint
         auto motor_setpoints = uniToDiff(v_, w_);
+
         setpoint_l_ = motor_setpoints.first;
         setpoint_r_ = motor_setpoints.second;
 
@@ -238,7 +239,8 @@ void BlueBot::updateMotorPeriodic()
         auto ticks = readEncoders();
 
         auto delta_ticks_l = ticks.first - last_ticks.first;                              // [ticks] left
-        auto delta_ticks_r = ticks.second - last_ticks.second;                              // [ticks] left
+        
+        auto delta_ticks_r = ticks.second - last_ticks.second;                              // [ticks] right
         
         float phi_l = 2* M_PI * (delta_ticks_l / ticks_per_rev_);        // [rad]
         vel_l_ = phi_l / (motor_interval_us_.count() / 1000000.0);     // [rad/s]
