@@ -26,8 +26,8 @@ int main(int argc, char *argv[])
     // set velocity to zero
     std::cout << "---------------------------------------> iniciando hilo motores" << std::endl;
     bot.driveMotors(0,0);
-    bot.setUnicycle(0, 0);
     bot.initMotorThread();
+    bot.setUnicycle(0, 0);
     std::this_thread::sleep_for(milliseconds(1000));
 
     bot.setUnicycle(vel, 0);
