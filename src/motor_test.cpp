@@ -25,9 +25,9 @@ int main(int argc, char *argv[])
     bot.setMotorGains(kp, ki, kd);
     // set velocity to zero
     std::cout << "---------------------------------------> iniciando hilo motores" << std::endl;
-    bot.initMotorThread();
     bot.driveMotors(0,0);
     bot.setUnicycle(0, 0);
+    bot.initMotorThread();
     std::this_thread::sleep_for(milliseconds(1000));
 
     bot.setUnicycle(vel, 0);
