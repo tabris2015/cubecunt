@@ -77,12 +77,12 @@ void PidController::compute()
     else if(output < out_min_) output = out_min_;
 
     *my_output_ = output;
-    #ifdef DEBUG
+    // #ifdef DEBUG
     std::cout << "set: " << *my_setpoint_
                 << " \tin: " << input
                 << " \terr: " << error 
                 << " \tout: " << output << std::endl;    
-    #endif // DEBUG
+    // #endif // DEBUG
 
     last_input_ = input;
 }
