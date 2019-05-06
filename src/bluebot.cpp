@@ -201,15 +201,17 @@ void BlueBot::updateStatePeriodic()
         
         // update setpoints
         theta_goal_ = atan2f(u_y , u_x);
-
-        v_ = sqrtf((u_x * u_x) + (u_y * u_y));
-
         // controller
         std::cout << std::setprecision(5) << "pos: (" << last_x_ << ", " << last_y_ << ") \t";
         angle_pid_.compute();
-
+        v_ = sqrtf((u_x * u_x) + (u_y * u_y));
+        
         std::cout << "dist: " << dist_to_goal << "\n";
-        if(dist_to_goal < 0.04) v_ = 0.0;
+        if(dist_to_goal < 0.03) 
+        {
+            v_ = 0.0;
+            w_ = 0.0;
+        }
         // actuation
         // driveUnicycle(v_, w_);
         // print state
