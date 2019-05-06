@@ -56,7 +56,8 @@ int main(int argc, char *argv[])
         //
         current_time = steady_clock::now();
         auto wakeup_error = current_time - nex_time;
-
+        auto error_micros = duration_cast<microseconds>(wakeup_error);
+        std::cout << error_micros.count() << " \t";
         //
 
         auto delta_ticks = rc_encoder_eqep_read(motor_id) - last_ticks;                              // [ticks] left
