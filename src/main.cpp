@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     bot.driveMotors(0,0);
     bot.setUnicycle(0,0);
     bot.setGoToGoalGains(atof(argv[1]), atof(argv[2]),atof(argv[3]));
-    bot.setVMax(atof(argv[6]));
+    bot.setVMax(atof(argv[4]));
     bot.initMotorThread();
     bot.initMainThread();
    
@@ -61,6 +61,7 @@ int main(int argc, char *argv[])
     {
         bot.setGoal(goal[0], goal[1]);
         while(!bot.isOnGoal()){};
+        std::cout << "------> objetivo alcanzado!!!!\n";
     }
 
     bot.setRedLed(0);
