@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     float kd = atof(argv[3]);
     
     double vel = atof(argv[4]);
-
+    double ang = atof(argv[5]);
     int motor_rate = atoi(argv[5]);
 
     
@@ -31,10 +31,9 @@ int main(int argc, char *argv[])
     std::this_thread::sleep_for(milliseconds(1000));
 
     bot.setUnicycle(vel, 0);
-    std::this_thread::sleep_for(milliseconds(2000));
-
-    bot.setUnicycle(0, 0);
-    std::this_thread::sleep_for(milliseconds(1000));
+    
+    while(bot.isAlive()){}
+    // std::this_thread::sleep_for(milliseconds(1000));
     
     std::cout << "---------------------------------------> FIN <-------------------------------" << std::endl;
 
