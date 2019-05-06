@@ -3,6 +3,7 @@
 #include <thread>
 #include "bluebot.h"
 
+#define DEBUG
 using namespace std::chrono;
 
 float input, output, setpoint;
