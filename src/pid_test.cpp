@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
         rc_motor_set(motor_id, output);
         last_ticks = rc_encoder_eqep_read(motor_id);
 
-        next_time = current_time + sample_time - wakeup_error;
+        next_time = current_time + sample_time - error_micros;
         std::this_thread::sleep_until(next_time);
 
     }
