@@ -49,14 +49,14 @@ int main(int argc, char *argv[])
     last_ticks = rc_encoder_eqep_read(motor_id);
 
     auto current_time = steady_clock::now();
-    auto nex_time = steady_clock::time_point{current_time};
+    auto next_time = steady_clock::time_point{current_time};
     rc_set_state(RUNNING);
 
     while(rc_get_state() == RUNNING)
     {
         //
         current_time = steady_clock::now();
-        auto wakeup_error = current_time - nex_time;
+        auto wakeup_error = current_time - next_time;
         auto error_micros = duration_cast<microseconds>(wakeup_error);
         std::cout << error_micros.count() << " \t";
         //
@@ -68,8 +68,8 @@ int main(int argc, char *argv[])
         rc_motor_set(motor_id, output);
         last_ticks = rc_encoder_eqep_read(motor_id);
 
-        nex_time = current_time + sample_time;
-        std::this_thread::sleep_until(nex_time);
+        next_time = current_time + sample_time - wakeup_error;
+        std::this_thread::sleep_until(next_time);
 
     }
     
