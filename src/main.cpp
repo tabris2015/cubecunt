@@ -41,6 +41,7 @@ void testMotors(blue::BlueBot* bot)
 int main(int argc, char *argv[])
 {
 
+    std::vector<std::vector<float>> goals{{0.8, 0}, {0,8, -0.3}, {0,0}};
 
     std::cout << "iniciando" << std::endl;
     blue::BlueBot bot(0.065/2, 0.17, 1496.0);
@@ -48,34 +49,22 @@ int main(int argc, char *argv[])
     bot.setMotorGains(0.11,0.15,0.0001);
     bot.driveMotors(0,0);
     bot.setUnicycle(0,0);
-   
     bot.setGoToGoalGains(atof(argv[1]), atof(argv[2]),atof(argv[3]));
-    bot.setGoal(atof(argv[4]), atof(argv[5]));
-    // bot.setLinearVel(atof(argv[6]));
     bot.setVMax(atof(argv[6]));
     bot.initMotorThread();
     bot.initMainThread();
-
-    // testMotors(&bot);
-    // std::cout << "both motors 0.15" << std::endl;
-    // bot.driveMotors(0.15, 0.15);
-    // std::this_thread::sleep_for(std::chrono::seconds(2));
-    // bot.driveMotors(0, 0);
-    // std::cout << "unicycle 0.1, 0.0" << std::endl;
-    // bot.driveUnicycle(0.1, 0.0);
-    // std::this_thread::sleep_for(std::chrono::seconds(2));
-    // bot.driveUnicycle(0, 0);
-    // std::this_thread::sleep_for(std::chrono::seconds(1));
-    // std::cout << "stop" << std::endl;
-    // bot.driveMotors(0, 0);
+   
+    bot.setRedLed(1);
+    bot.setGreenLed(0);
     
-    while(bot.isAlive())
+    for(auto goal: goals)
     {
-        bot.setGreenLed(1);
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        bot.setGreenLed(0);
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        bot.setGoal(goal[0], goal[1]);
+        while(!bot.isOnGoal()){};
     }
 
+    bot.setRedLed(0);
+    bot.setGreenLed(1);
+    std::cout << "COMPLETADO!!!!\n";
     return 0;
 }

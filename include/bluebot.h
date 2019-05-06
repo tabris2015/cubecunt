@@ -136,6 +136,8 @@ private:
     PidController left_motor_pid_;
     PidController right_motor_pid_;
 
+    bool on_goal_;
+
     float Kp_gtg_;
     float Ki_gtg_;
     float Kd_gtg_;
@@ -208,7 +210,7 @@ public:
     void setAngle(float theta_goal);
     void setLinearVel(float v);
     void setMotorGains(float kp, float ki, float kd);
-
+    bool isOnGoal(){return on_goal_;}
 };
 
 }
