@@ -46,14 +46,14 @@ int main(int argc, char *argv[])
 
     auto current_time = steady_clock::now();
     auto nex_time = steady_clock::time_point{current_time};
-
+    rc_set_state(RUNNING);
 
     while(rc_get_state() == RUNNING)
     {
         //
         current_time = steady_clock::now();
         auto wakeup_error = current_time - nex_time;
-        
+
         //
 
         auto delta_ticks = rc_encoder_eqep_read(2) - last_ticks;                              // [ticks] left
