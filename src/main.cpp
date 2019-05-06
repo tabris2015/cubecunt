@@ -48,14 +48,14 @@ int main(int argc, char *argv[])
     bot.setMotorGains(0.11,0.15,0.0001);
     bot.driveMotors(0,0);
     bot.setUnicycle(0,0);
-
+   
     bot.setGoToGoalGains(atof(argv[1]), atof(argv[2]),atof(argv[3]));
     bot.setGoal(atof(argv[4]), atof(argv[5]));
-    bot.setLinearVel(atof(argv[6]));
-
+    // bot.setLinearVel(atof(argv[6]));
+    bot.setVMax(atof(argv[6]));
     bot.initMotorThread();
     bot.initMainThread();
-    
+
     // testMotors(&bot);
     // std::cout << "both motors 0.15" << std::endl;
     // bot.driveMotors(0.15, 0.15);
