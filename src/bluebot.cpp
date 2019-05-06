@@ -196,13 +196,14 @@ void BlueBot::updateStatePeriodic()
         auto K = v_max_ * (1 - expf(-alpha * (dist_to_goal * dist_to_goal))) / (dist_to_goal * dist_to_goal);
 
         // compute control signal
-        auto u_x = -K * e_x;
-        auto u_y = -K * e_y;
+        auto u_x = K * e_x;
+        auto u_y = K * e_y;
         
         // update setpoints
         theta_goal_ = atan2f(u_y , u_x);
+
         v_ = sqrtf((u_x * u_x) + (u_y * u_y));
-        
+
         // controller
         std::cout << std::setprecision(5) << "pos: (" << last_x_ << ", " << last_y_ << ") \t";
         angle_pid_.compute();
