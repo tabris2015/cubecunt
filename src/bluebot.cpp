@@ -211,6 +211,7 @@ void BlueBot::updateStatePeriodic()
         {
             v_ = 0.0;
             w_ = 0.0;
+            if(!on_goal_) on_goal_ = true;
         }
         
 
@@ -306,6 +307,7 @@ void BlueBot::setGoal(float x_goal, float y_goal)
     theta_goal_ = atan2f((y_goal_ - last_y_) , (x_goal_ - last_x_));
 
     std::cout << "new goal: [" << x_goal_ << ", " << y_goal_ << "] theta: " << theta_goal_ << std::endl;
+    on_goal_ = false;
 }
 
 void BlueBot::setGoToGoalGains(float kp, float ki, float kd)
