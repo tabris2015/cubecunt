@@ -11,6 +11,8 @@ PidController::PidController(float * input, float * output, float * setpoint,
 my_output_(output), 
 my_setpoint_(setpoint), 
 sample_time_(sample_time), 
+out_sum_(0),
+last_input_(0),
 angle_error_(is_angle)
 {
     setOutputLimits(-1.0, 1.0);
