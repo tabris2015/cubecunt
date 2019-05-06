@@ -164,6 +164,7 @@ private:
     void initLeds();
     void initImu();
 
+    void resetEncoders();
     // robot model
     std::pair<double, double> uniToDiff(double v, double w);
 

@@ -211,9 +211,17 @@ void BlueBot::updateStatePeriodic()
     }
 }
 
+void BlueBot::resetEncoders()
+{
+    rc_encoder_eqep_write(left_m_channel, 0);
+    rc_encoder_eqep_write(right_m_channel, 0);
+    
+}
 
 void BlueBot::updateMotorPeriodic()
 {
+    // reset encoders
+    resetEncoders();
     auto last_ticks = readEncoders();
     // hilo para actualizar periodicamente 
     while(rc_get_state() != EXITING)
