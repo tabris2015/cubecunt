@@ -84,6 +84,7 @@ void BlueBot::initMainThread()
 
 void BlueBot::initMotorThread()
 {
+    angle_pid_.setOutputLimits(-3, 3);
     motor_current_start_time_ = std::chrono::steady_clock::now();
     motor_next_start_time_ = motor_current_start_time_;
     motorLoopThread = std::thread(&BlueBot::updateMotorPeriodic, this);
