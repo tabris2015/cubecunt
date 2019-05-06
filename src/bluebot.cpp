@@ -206,7 +206,7 @@ void BlueBot::updateStatePeriodic()
         angle_pid_.compute();
         v_ = sqrtf((u_x * u_x) + (u_y * u_y));
         
-        std::cout << "dist: " << dist_to_goal << "\r";
+        std::cout << "dist: " << dist_to_goal << "\n";
         if(dist_to_goal < 0.02) 
         {
             v_ = 0.0;

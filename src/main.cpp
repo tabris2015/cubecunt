@@ -41,7 +41,7 @@ void testMotors(blue::BlueBot* bot)
 int main(int argc, char *argv[])
 {
 
-    std::vector<std::vector<float>> goals{{0.8, 0}, {0,8, -0.3}, {0,0}};
+    std::vector<std::vector<float>> goals{{0.8, 0}, {0.8, -0.3}, {0,0}};
 
     std::cout << "iniciando" << std::endl;
     blue::BlueBot bot(0.065/2, 0.17, 1496.0);
