@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
         float phi_l = 2* M_PI * (delta_ticks / N);        // [rad]
         input = phi_l / (sample_time.count() / 1000000.0);     // [rad/s]
         motor_pid.compute();
-        rc_motor_set(2, output);
+        rc_motor_set(motor_id, output);
         last_ticks = rc_encoder_eqep_read(motor_id);
 
         nex_time = current_time + sample_time;
