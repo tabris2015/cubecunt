@@ -192,7 +192,7 @@ void BlueBot::updateStatePeriodic()
 
         // compute K
         auto dist_to_goal = distance(last_x_, last_y_, x_goal_, y_goal_);
-        float alpha = 0.2;
+        float alpha = 10;
         auto K = v_max_ * (1 - expf(-alpha * (dist_to_goal * dist_to_goal))) / (dist_to_goal * dist_to_goal);
 
         // compute control signal
