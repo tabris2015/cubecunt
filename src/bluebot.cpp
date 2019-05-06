@@ -7,7 +7,7 @@ using blue::BlueBot;
 using blue::PidController;
 
 // constructor
-BlueBot::BlueBot(float R, float L, float N, int rate, int motor_rate, bool loop_thread, bool motor_thread)   
+BlueBot::BlueBot(float R, float L, float N, int rate, int motor_rate)   
 :sample_rate_(rate), motor_sample_rate_(motor_rate),        // init sample rate [Hz]
 wheel_radius_(R),           // init robot wheel radius [m]                                    
 base_length_(L),            // init robot base length [m]
@@ -25,8 +25,7 @@ angle_pid_(&last_phi_, &w_, &theta_goal_, Kp_gtg_, Ki_gtg_, Kd_gtg_, interval_us
 
 Kp_motor_(0), Ki_motor_(0), Kd_motor_(0),
 left_motor_pid_(&vel_l_, &pwm_l_, &setpoint_l_, Kp_motor_, Ki_motor_, Kd_motor_, motor_interval_us_),
-right_motor_pid_(&vel_r_, &pwm_r_, &setpoint_r_, Kp_motor_, Ki_motor_, Kd_motor_, motor_interval_us_),
-loop_thread_enabled_(loop_thread), motor_thread_enabled_(motor_thread)
+right_motor_pid_(&vel_r_, &pwm_r_, &setpoint_r_, Kp_motor_, Ki_motor_, Kd_motor_, motor_interval_us_)
 {
 
     // asegurarse que otra instancia no esta corriendo
@@ -58,7 +57,6 @@ loop_thread_enabled_(loop_thread), motor_thread_enabled_(motor_thread)
     // preparar para iniciar
     std::cout << "iniciando...\n";
 
-
     // iniciar motores
     std::this_thread::sleep_for(std::chrono::seconds(1));
     std::cout << "iniciando motores...\n";
@@ -69,14 +67,7 @@ loop_thread_enabled_(loop_thread), motor_thread_enabled_(motor_thread)
                 << " us/tick \nPeriodo main thread: "
                 << interval_us_.count()
                 << " us\t Periodo motor thread: "
-                << motor_interval_us_.count();
-
-    // iniciar hilos periodicos
-    if(motor_thread_enabled_)
-        initMotorThread();
-
-    if(loop_thread_enabled_)
-        initMainThread();
+                << motor_interval_us_.count() << "\n";
 
     init_time_ = std::chrono::steady_clock::now();
     rc_set_state(RUNNING);
@@ -141,7 +132,7 @@ void BlueBot::initImu()
     if(rc_mpu_initialize(&imu_data_, imu_config_)) throw "error al iniciar IMU\n";
 
     std::cout << "esperando que sensores se estabilicen...\n";
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    // std::this_thread::sleep_for(std::chrono::seconds(1));
     // rc_mpu_set_dmp_callback(onImuInterrupt);
 }
 
@@ -154,7 +145,6 @@ void BlueBot::updateImu()
     mag_heading_ = -atan2(imu_data_.mag[1], imu_data_.mag[0]);
     std::cout << "raw heading: " << mag_heading_ << std::endl;
     // compute gyro heading
-
 }
 // odometry
 void BlueBot::updateOdometry()
@@ -271,7 +261,7 @@ void BlueBot::updateMotorPeriodic()
         // determine next point 
         motor_next_start_time_ = motor_current_start_time_ + motor_interval_us_;
 
-        last_ticks = readEncoders();
+        last_ticks = ticks;
         // sleep until next period
         std::this_thread::sleep_until(motor_next_start_time_);
     }
