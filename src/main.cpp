@@ -41,12 +41,12 @@ void testMotors(blue::BlueBot* bot)
 int main(int argc, char *argv[])
 {
 
-    std::vector<std::vector<float>> goals{{0.8, 0}, {1.1, -0.5}, {0.5, -0.5},{0,0}};
+    std::vector<std::vector<float>> goals{{0.4, 0},{0.4, -0.4}, {0.75, 0},{1.1, -0.5}, {0.5, -0.5},{0,0}};
 
     std::cout << "iniciando" << std::endl;
     blue::BlueBot bot(0.065/2, 0.17, 1496.0);
     // pid motores
-    bot.setMotorGains(0.11,0.15,0.0001);
+    bot.setMotorGains(0.12,0.16,0.0001);
     bot.driveMotors(0,0);
     bot.setUnicycle(0,0);
     bot.setGoToGoalGains(atof(argv[1]), atof(argv[2]),atof(argv[3]));
