@@ -19,9 +19,11 @@ add_library(robotcontrol SHARED ${lib_src} ${bmp_src} ${io_src} ${math_src} ${mp
 
 # add_executable(cubecunt src/main.cpp src/pid.cpp src/bluebot.cpp)
 add_executable(motor_test src/motor_test.cpp src/pid.cpp src/bluebot.cpp)
+add_executable(pid_test src/pid_test.cpp src/pid.cpp)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
 # target_link_libraries(cubecunt Threads::Threads robotcontrol)
 target_link_libraries(motor_test Threads::Threads robotcontrol)
+target_link_libraries(pid_test Threads::Threads robotcontrol)

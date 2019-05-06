@@ -1,0 +1,74 @@
+#include <iostream>
+#include <chrono>
+#include <thread>
+#include "bluebot.h"
+
+using namespace std::chrono;
+
+float input, output, setpoint;
+
+int last_ticks;
+// R L N
+float R = 0.065 /2;
+float L = 0.17;
+float N = 1496.0;
+//(0.065/2, 0.17, 1496.0
+
+
+
+int main(int argc, char *argv[])
+{
+
+    float kp = atof(argv[1]);
+    float ki = atof(argv[2]);
+    float kd = atof(argv[3]);
+    
+    setpoint = atof(argv[4]);
+
+    int motor_rate = atoi(argv[5]);
+    
+    auto sample_time = microseconds(1000000/motor_rate);
+
+    //
+    std::cout << "---------------------------------------> iniciando" << std::endl;
+    // asegurarse que otra instancia no esta corriendo
+    if(rc_kill_existing_process(2.0) < -2) return -1;
+
+    // iniciar signal handler
+    if(rc_enable_signal_handler() < 0) return -1;
+    if(rc_encoder_eqep_init() != 0) return -1;
+    rc_make_pid_file();
+    if(rc_motor_init() != 0) return -1;
+
+    blue::PidController motor_pid(&input, &output, &setpoint, kp, ki, kd, sample_time);
+    
+    last_ticks = rc_encoder_eqep_read(2);
+
+    auto current_time = steady_clock::now();
+    auto nex_time = steady_clock::time_point{current_time};
+
+
+    while(rc_get_state() == RUNNING)
+    {
+        //
+        current_time = steady_clock::now();
+        auto wakeup_error = current_time - nex_time;
+        
+        //
+
+        auto delta_ticks = rc_encoder_eqep_read(2) - last_ticks;                              // [ticks] left
+        float phi_l = 2* M_PI * (delta_ticks / N);        // [rad]
+        input = phi_l / (sample_time.count() / 1000000.0);     // [rad/s]
+        motor_pid.compute();
+        rc_motor_set(2, output);
+        last_ticks = rc_encoder_eqep_read(2);
+
+        nex_time = current_time + sample_time;
+        std::this_thread::sleep_until(nex_time);
+
+    }
+    
+    std::cout << "---------------------------------------> FIN <-------------------------------" << std::endl;
+
+    return 0;
+}
