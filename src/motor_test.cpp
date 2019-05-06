@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
     bot.setUnicycle(0, 0);
     std::this_thread::sleep_for(milliseconds(1000));
 
-    bot.setUnicycle(vel, 0);
+    bot.setUnicycle(vel, ang);
     
     while(bot.isAlive()){}
     // std::this_thread::sleep_for(milliseconds(1000));
