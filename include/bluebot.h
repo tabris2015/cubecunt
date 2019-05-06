@@ -117,6 +117,7 @@ private:
     float pwm_r_;
 
     // unicycle setpoints
+    float v_max_;
     float v_;
     float w_;
     float last_x_;
@@ -192,6 +193,7 @@ public:
 
     
     // velocities
+    void setVMax(float v) {v_max_ = v;}
     void setUnicycle(double v, double w) {v_ = v; w_ = w;}
     // motors
 

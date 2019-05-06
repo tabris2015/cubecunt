@@ -70,6 +70,7 @@ right_motor_pid_(&vel_r_, &pwm_r_, &setpoint_r_, Kp_motor_, Ki_motor_, Kd_motor_
                 << motor_interval_us_.count() << "\n";
 
     init_time_ = std::chrono::steady_clock::now();
+    setVMax(0.15);
     rc_set_state(RUNNING);
 
 }
@@ -183,15 +184,29 @@ void BlueBot::updateStatePeriodic()
         // get current wakeup time
         current_start_time_ = std::chrono::steady_clock::now();
         // do task
-        // updateImu();
+        // update state from encoders
         updateOdometry();
-        // update goal
-        theta_goal_ = atan2f((y_goal_ - last_y_) , (x_goal_ - last_x_));
+        // compute error signal
+        auto e_x = x_goal_ - last_x_;
+        auto e_y = y_goal_ - last_y_;
+
+        // compute K
+        auto dist_to_goal = distance(last_x_, last_y_, x_goal_, y_goal_);
+        float alpha = 0.2;
+        auto K = v_max_ * (1 - expf(-alpha * (dist_to_goal * dist_to_goal))) / (dist_to_goal * dist_to_goal);
+
+        // compute control signal
+        auto u_x = -K * e_x;
+        auto u_y = -K * e_y;
+        
+        // update setpoints
+        theta_goal_ = atan2f(u_y , u_x);
+        v_ = sqrtf((u_x * u_x) + (u_y * u_y));
+        
         // controller
         std::cout << std::setprecision(5) << "pos: (" << last_x_ << ", " << last_y_ << ") \t";
         angle_pid_.compute();
 
-        auto dist_to_goal = distance(last_x_, last_y_, x_goal_, y_goal_);
         std::cout << "dist: " << dist_to_goal << "\n";
         if(dist_to_goal < 0.04) v_ = 0.0;
         // actuation
