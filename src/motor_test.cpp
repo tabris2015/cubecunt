@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     
     double vel = atof(argv[4]);
     double ang = atof(argv[5]);
-    int motor_rate = atoi(argv[5]);
+    int motor_rate = atoi(argv[6]);
 
     
     std::cout << "---------------------------------------> iniciando" << std::endl;
